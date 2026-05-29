@@ -1,25 +1,28 @@
-# Chemistry Assignment Front Page Generator 🧪
+# DBIT Assignment Front Page Generator
 
-A beautiful, responsive, and fully client-side web application designed to generate pristine, academically-formatted A4 assignment front pages for the Chemistry Department at Don Bosco Institute of Technology (VTU).
+A beautiful, responsive, fully client-side web application that generates pristine, academically-formatted A4 assignment front pages for Don Bosco Institute of Technology (DBIT), Visvesvaraya Technological University (VTU).
 
-## 🌟 Features
+## Features
 
-- **Exact Academic Formatting**: Meticulously recreates the official DBIT/VTU front page layout, complete with double borders and Times New Roman typography.
-- **100% Client-Side Rendering**: Uses zero backend servers. The generation happens entirely in the browser using high-resolution HTML-to-canvas rendering.
-- **Live Exact Preview**: See exactly what your printed PDF will look like in real-time as you type, complete with zoom controls.
-- **Export Options**: Download the crisp output directly as a `.pdf` or export it as a high-resolution `.png` image.
-- **Sleek UI**: Built with a modern, glassmorphism-inspired sidebar that looks great on both desktop and mobile.
+- **Exact Academic Formatting** - Recreates the official DBIT/VTU front page layout with double borders and Times New Roman typography
+- **Live Exact Preview** - See your PDF in real-time as you type, with zoom controls
+- **Smart Field Pickers** - Dropdowns for degree, branch and semester with a manual entry fallback
+- **Export Options** - Download as crisp `.pdf` or high-resolution `.png`
+- **PDF Merge** - Upload your assignment PDF and get a single merged file with the front page prepended
+- **100% Client-Side** - No backend, no data sent anywhere. Everything runs in the browser
+- **Sleek UI** - Glassmorphism-inspired sidebar, works on desktop and mobile
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-- **HTML5 & CSS3**: For the application UI and the exact A4 layout template.
-- **Vanilla JavaScript**: For real-time DOM data-binding.
-- **[html2canvas](https://html2canvas.hertzen.com/)**: For taking a high-fidelity snapshot of the HTML template.
-- **[jsPDF](https://github.com/parallax/jsPDF)**: For assembling the snapshot into a downloadable A4 PDF document.
+- **HTML5 & CSS3** - Application UI and exact A4 layout template
+- **Vanilla JavaScript** - Real-time DOM data-binding, zero framework overhead
+- **[html2canvas](https://html2canvas.hertzen.com/)** - High-fidelity HTML-to-canvas snapshot
+- **[jsPDF](https://github.com/parallax/jsPDF)** - Assembles snapshots into downloadable A4 PDF
+- **[pdf-lib](https://pdf-lib.js.org/)** - Client-side PDF merging
 
-## 🚀 Quick Start (Local Development)
+## Quick Start (Local Development)
 
-Because the application uses external images (`VTU.png` and `dblogo.png`) and leverages HTML canvas, it must be run via a local server to avoid browser Cross-Origin Resource Sharing (CORS) restrictions.
+The application uses external images and HTML canvas, so it must be served over HTTP to avoid CORS restrictions.
 
 1. Clone the repository:
    ```bash
@@ -35,12 +38,20 @@ Because the application uses external images (`VTU.png` and `dblogo.png`) and le
    ```
 4. Open the provided localhost URL in your browser.
 
-## 🌍 Deployment
+## Deployment
 
-This application is configured for instant, zero-config deployment on **Vercel**. 
+Configured for zero-config deployment on **Vercel**. The included `vercel.json` sets aggressive caching for static assets and enables clean URLs.
 
-A `vercel.json` file is included to ensure aggressive caching of static assets (like logos and stylesheets) and clean URLs, making the application lightning fast.
+## Credits
 
-## 📝 Credits
-Created by **Mithun Gowda B**  
+**Created by** Mithun Gowda B - [mithungowda.b7411@gmail.com](mailto:mithungowda.b7411@gmail.com)
 *Don Bosco Institute of Technology, Bengaluru*
+
+**Marketing by** Manas Kiran Habbu
+*Don Bosco Institute of Technology, Bengaluru*
+
+## License
+
+This project is proprietary software. All rights reserved.
+See [LICENSE](./LICENSE) for full terms.
+Unauthorized copying, distribution, or commercial use is strictly prohibited.

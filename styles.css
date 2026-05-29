@@ -83,6 +83,19 @@
     font-weight: 700;
   }
 
+  .marketing-credit {
+    font-size: 0.8rem !important;
+    color: #0369a1 !important;
+    background: #e0f2fe;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin: 0;
+  }
+  .marketing-credit strong {
+    font-weight: 700;
+  }
+
   .header-badge {
     display: flex;
     align-items: center;
