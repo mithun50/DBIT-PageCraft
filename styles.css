@@ -225,7 +225,81 @@
   .btn-primary:active, .btn-secondary:active {
     transform: translateY(0) scale(0.98);
   }
-  
+
+  /* Merge Section */
+  .merge-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .merge-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .upload-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px dashed #cbd5e1;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .upload-area:hover {
+    border-color: var(--primary-color);
+    background: #f5f3ff;
+    color: var(--primary-color);
+  }
+
+  .upload-area.has-file {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  .btn-merge {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    background: #0f172a;
+    color: #fff;
+  }
+
+  .btn-merge:hover:not(:disabled) {
+    background: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  }
+
+  .btn-merge:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .btn-merge:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
   /* ==========================================================================
      Preview Area (Wrapper for A4)
      ========================================================================== */

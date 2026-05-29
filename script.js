@@ -262,3 +262,85 @@ document.getElementById('btn-export-png').addEventListener('click', async () => 
     btn.disabled = false;
   }
 });
+
+// ─── PDF Upload & Merge ───────────────────────────────────────────────────────
+const uploadInput = document.getElementById('f-upload-pdf');
+const uploadLabel = document.getElementById('upload-label');
+const uploadFilename = document.getElementById('upload-filename');
+const mergeBtn = document.getElementById('btn-merge');
+
+uploadInput.addEventListener('change', () => {
+  const file = uploadInput.files[0];
+  if (file) {
+    uploadFilename.textContent = file.name.length > 28 ? file.name.slice(0, 25) + '...' : file.name;
+    uploadLabel.classList.add('has-file');
+    mergeBtn.disabled = false;
+  } else {
+    uploadFilename.textContent = 'Click to upload PDF';
+    uploadLabel.classList.remove('has-file');
+    mergeBtn.disabled = true;
+  }
+});
+
+mergeBtn.addEventListener('click', async () => {
+  const file = uploadInput.files[0];
+  if (!file) return;
+  if (!validateRequiredFields()) return;
+
+  const originalText = mergeBtn.innerHTML;
+  mergeBtn.innerText = 'Merging...';
+  mergeBtn.disabled = true;
+
+  try {
+    const { PDFDocument } = PDFLib;
+
+    // 1. Capture front page as image
+    const canvas = await capturePageDesktopMode(2);
+    const imgData = canvas.toDataURL('image/png');
+    // Convert base64 to Uint8Array
+    const base64 = imgData.split(',')[1];
+    const imgBytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+
+    // 2. Read uploaded PDF
+    const uploadedBytes = await file.arrayBuffer();
+    const uploadedPdf = await PDFDocument.load(uploadedBytes);
+
+    // 3. Create new merged PDF
+    const merged = await PDFDocument.create();
+
+    // 4. Add front page as page 1
+    const frontPageDoc = await PDFDocument.create();
+    const pngImage = await frontPageDoc.embedPng(imgBytes);
+    const a4 = { width: 595.28, height: 841.89 }; // A4 in points
+    const frontPage = frontPageDoc.addPage([a4.width, a4.height]);
+    frontPage.drawImage(pngImage, { x: 0, y: 0, width: a4.width, height: a4.height });
+    const [copiedFront] = await merged.copyPages(frontPageDoc, [0]);
+    merged.addPage(copiedFront);
+
+    // 5. Copy all pages from uploaded PDF
+    const pageCount = uploadedPdf.getPageCount();
+    const pageIndices = Array.from({ length: pageCount }, (_, i) => i);
+    const copiedPages = await merged.copyPages(uploadedPdf, pageIndices);
+    copiedPages.forEach(p => merged.addPage(p));
+
+    // 6. Save and download
+    const mergedBytes = await merged.save();
+    const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Chemistry_Assignment_${formEls.studentName.value.replace(/\s+/g, '_')}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    logGeneration('MERGE');
+
+  } catch (err) {
+    console.error('Merge failed:', err);
+    alert('Failed to merge PDFs. Please try again.');
+  } finally {
+    mergeBtn.innerHTML = originalText;
+    mergeBtn.disabled = false;
+  }
+});
