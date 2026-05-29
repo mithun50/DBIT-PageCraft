@@ -110,8 +110,43 @@ function wrapAt26(str) {
     .join('<br>');
 }
 
-// Real-time data binding
+// "Other" manual input handling for select fields
+const otherFields = {
+  degree:   { select: document.getElementById('f-degree'),   input: document.getElementById('f-degree-other') },
+  branch:   { select: document.getElementById('f-branch'),   input: document.getElementById('f-branch-other') },
+  semester: { select: document.getElementById('f-semester'), input: document.getElementById('f-semester-other') },
+};
+
+function getFieldValue(key) {
+  if (otherFields[key]) {
+    const { select, input } = otherFields[key];
+    return select.value === '__other__' ? input.value : select.value;
+  }
+  return formEls[key].value;
+}
+
+Object.entries(otherFields).forEach(([key, { select, input }]) => {
+  select.addEventListener('input', () => {
+    if (select.value === '__other__') {
+      input.style.display = 'block';
+      input.required = true;
+      select.required = false;
+      templateEls[key].textContent = input.value;
+    } else {
+      input.style.display = 'none';
+      input.required = false;
+      select.required = true;
+      templateEls[key].textContent = select.value;
+    }
+  });
+  input.addEventListener('input', () => {
+    templateEls[key].textContent = input.value;
+  });
+});
+
+// Real-time data binding for all other fields
 Object.keys(formEls).forEach(key => {
+  if (otherFields[key]) return; // handled above
   formEls[key].addEventListener('input', (e) => {
     if (wrapFields.has(key)) {
       templateEls[key].innerHTML = wrapAt26(e.target.value);
