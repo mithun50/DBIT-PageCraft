@@ -68,9 +68,12 @@ function validateRequiredFields() {
 const wrapFields = new Set(['studentName', 'usn', 'guideName', 'guideTitle', 'guideDept']);
 
 function wrapAt26(str) {
-  // Escape HTML special chars, then insert <br> every 26 characters
+  // Escape HTML special chars
   const escaped = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  return escaped.replace(/(.{26})/g, '$1<br>');
+  // Replace all spaces with &nbsp; so browser doesn't collapse them
+  const spaced = escaped.replace(/ /g, '&nbsp;');
+  // Insert <br> every 26 characters
+  return spaced.replace(/(.{26})/g, '$1<br>');
 }
 
 // Real-time data binding
