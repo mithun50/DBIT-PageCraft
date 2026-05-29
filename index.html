@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chemistry Front Page Generator</title>
-  <link rel="stylesheet" href="styles.css?v=7">
+  <title>DBIT Front Page Generator</title>
+  <link rel="stylesheet" href="styles.css?v=8">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,7 +22,7 @@
     <!-- Sidebar Form -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h2>Chemistry Front Page</h2>
+        <h2>DBIT Front Page</h2>
         <p>Fill in your details. We generate a perfectly crisp, 100% clean PDF instantly.</p>
         <div class="header-links">
           <p class="creator-credit">Created by <strong>Mithun Gowda B</strong></p>
@@ -56,11 +56,29 @@
         <div class="form-row">
           <div class="form-group">
             <label for="f-degree">Degree</label>
-            <input type="text" id="f-degree" placeholder="e.g. Bachelor of Engineering" required>
+            <select id="f-degree" required>
+              <option value="" disabled selected>Select degree</option>
+              <option>Bachelor of Engineering</option>
+              <option>Bachelor of Technology</option>
+              <option>Master of Engineering</option>
+              <option>Master of Technology</option>
+              <option>Bachelor of Science</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="f-branch">Branch</label>
-            <input type="text" id="f-branch" placeholder="e.g. Computer Science" required>
+            <select id="f-branch" required>
+              <option value="" disabled selected>Select branch</option>
+              <option>Computer Science and Engineering</option>
+              <option>Information Science and Engineering</option>
+              <option>Electronics and Communication Engineering</option>
+              <option>Electrical and Electronics Engineering</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Artificial Intelligence and Machine Learning</option>
+              <option>Data Science</option>
+              <option>Robotics and Automation</option>
+            </select>
           </div>
         </div>
 
@@ -80,7 +98,17 @@
         <div class="form-row">
           <div class="form-group">
             <label for="f-semester">Semester</label>
-            <input type="text" id="f-semester" placeholder="e.g. 2nd Sem" required>
+            <select id="f-semester" required>
+              <option value="" disabled selected>Select</option>
+              <option>1st Sem</option>
+              <option>2nd Sem</option>
+              <option>3rd Sem</option>
+              <option>4th Sem</option>
+              <option>5th Sem</option>
+              <option>6th Sem</option>
+              <option>7th Sem</option>
+              <option>8th Sem</option>
+            </select>
           </div>
           <div class="form-group">
             <label for="f-section">Section</label>
@@ -218,6 +246,6 @@
     </main>
   </div>
 
-  <script src="script.js?v=7"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>
