@@ -442,6 +442,14 @@
   #template-root .guide-column .info-label {
     min-width: 85px; /* Aligns "Guided By:" */
   }
+
+  #template-root #t-student-name,
+  #template-root #t-usn,
+  #template-root #t-guide-name,
+  #template-root #t-guide-title,
+  #template-root #t-guide-dept {
+    white-space: pre-wrap;
+  }
   
   /* ==========================================================================
      Mobile Responsiveness

@@ -64,10 +64,21 @@ function validateRequiredFields() {
   return true;
 }
 
+// Fields that need line breaks inserted every 26 characters
+const wrapFields = new Set(['studentName', 'usn', 'guideName', 'guideTitle', 'guideDept']);
+
+function wrapAt26(str) {
+  return str.replace(/(.{26})/g, '$1\n');
+}
+
 // Real-time data binding
 Object.keys(formEls).forEach(key => {
   formEls[key].addEventListener('input', (e) => {
-    templateEls[key].textContent = e.target.value;
+    if (wrapFields.has(key)) {
+      templateEls[key].innerText = wrapAt26(e.target.value);
+    } else {
+      templateEls[key].textContent = e.target.value;
+    }
   });
 });
 
