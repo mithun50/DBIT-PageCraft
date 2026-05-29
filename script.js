@@ -54,6 +54,15 @@ const templateEls = {
   guideTitle: document.getElementById('t-guide-title'),
   guideDept: document.getElementById('t-guide-dept')
 };
+const generatorForm = document.getElementById('generator-form');
+
+function validateRequiredFields() {
+  if (!generatorForm.checkValidity()) {
+    generatorForm.reportValidity();
+    return false;
+  }
+  return true;
+}
 
 // Real-time data binding
 Object.keys(formEls).forEach(key => {
@@ -152,6 +161,7 @@ document.getElementById('btn-download').addEventListener('click', async () => {
   btn.disabled = true;
 
   try {
+    if (!validateRequiredFields()) return;
     const canvas = await capturePageDesktopMode(2);
     const imgData = canvas.toDataURL('image/png');
 
@@ -182,6 +192,7 @@ document.getElementById('btn-export-png').addEventListener('click', async () => 
   btn.disabled = true;
 
   try {
+    if (!validateRequiredFields()) return;
     const canvas = await capturePageDesktopMode(3);
     const imgData = canvas.toDataURL('image/png');
 
