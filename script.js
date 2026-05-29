@@ -68,12 +68,46 @@ function validateRequiredFields() {
 const wrapFields = new Set(['studentName', 'usn', 'guideName', 'guideTitle', 'guideDept']);
 
 function wrapAt26(str) {
-  // Escape HTML special chars
-  const escaped = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // Replace all spaces with &nbsp; so browser doesn't collapse them
-  const spaced = escaped.replace(/ /g, '&nbsp;');
-  // Insert <br> every 26 characters
-  return spaced.replace(/(.{26})/g, '$1<br>');
+  const MAX = 26;
+  const words = str.split(' ');
+  const lines = [];
+  let current = '';
+
+  for (const word of words) {
+    if (!current) {
+      // Word itself exceeds limit — hard break it
+      if (word.length > MAX) {
+        let remaining = word;
+        while (remaining.length > MAX) {
+          lines.push(remaining.slice(0, MAX));
+          remaining = remaining.slice(MAX);
+        }
+        current = remaining;
+      } else {
+        current = word;
+      }
+    } else if ((current + ' ' + word).length <= MAX) {
+      current += ' ' + word;
+    } else {
+      lines.push(current);
+      if (word.length > MAX) {
+        let remaining = word;
+        while (remaining.length > MAX) {
+          lines.push(remaining.slice(0, MAX));
+          remaining = remaining.slice(MAX);
+        }
+        current = remaining;
+      } else {
+        current = word;
+      }
+    }
+  }
+  if (current) lines.push(current);
+
+  // Escape HTML and join with <br>
+  return lines
+    .map(l => l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'))
+    .join('<br>');
 }
 
 // Real-time data binding
