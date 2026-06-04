@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DBIT Major Project Report Generator</title>
+  <link rel="stylesheet" href="project-report-styles.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Sidebar Form -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Project Report Generator</h2>
+        <p>Generate Title Page, Certificate, Declaration & Acknowledgement for your Major Project Report.</p>
+        <div class="header-links">
+          <p class="creator-credit">By <strong>Mithun Gowda B</strong></p>
+          <a href="https://github.com/mithun50/B25CHE22B-AFPG" target="_blank" class="header-badge github-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+            GitHub
+          </a>
+        </div>
+      </div>
+
+      <form id="generator-form">
+        <!-- Project Details -->
+        <h4>Project Details</h4>
+        <div class="form-group">
+          <label for="f-project-title">Project Title</label>
+          <input type="text" id="f-project-title" placeholder="e.g. GESTURE2SPEECH: AI POWERED SIGN LANGUAGE INTERPRETATION SYSTEM" required>
+        </div>
+
+        <div class="form-group">
+          <label for="f-phase">Phase</label>
+          <select id="f-phase" required>
+            <option value="" disabled selected>Select phase</option>
+            <option>Phase-1</option>
+            <option>Phase-2</option>
+            <option value="__other__">Other (type manually)</option>
+          </select>
+          <input type="text" id="f-phase-other" placeholder="Enter phase" style="display:none; margin-top:8px;">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-degree">Degree</label>
+            <select id="f-degree" required>
+              <option value="" disabled selected>Select degree</option>
+              <option>Bachelor of Engineering</option>
+              <option>Bachelor of Technology</option>
+              <option>Master of Engineering</option>
+              <option>Master of Technology</option>
+              <option value="__other__">Other (type manually)</option>
+            </select>
+            <input type="text" id="f-degree-other" placeholder="Enter degree" style="display:none; margin-top:8px;">
+          </div>
+          <div class="form-group">
+            <label for="f-branch">Branch</label>
+            <select id="f-branch" required>
+              <option value="" disabled selected>Select branch</option>
+              <option>Computer Science and Engineering</option>
+              <option>Information Science and Engineering</option>
+              <option>Electronics and Communication Engineering</option>
+              <option>Electrical and Electronics Engineering</option>
+              <option>Mechanical Engineering</option>
+              <option>Civil Engineering</option>
+              <option>Artificial Intelligence and Machine Learning</option>
+              <option>Data Science</option>
+              <option>Robotics and Automation</option>
+              <option value="__other__">Other (type manually)</option>
+            </select>
+            <input type="text" id="f-branch-other" placeholder="Enter branch" style="display:none; margin-top:8px;">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="f-semester">Semester</label>
+            <select id="f-semester" required>
+              <option value="" disabled selected>Select</option>
+              <option>first</option>
+              <option>second</option>
+              <option>third</option>
+              <option>fourth</option>
+              <option>fifth</option>
+              <option>sixth</option>
+              <option>seventh</option>
+              <option>eighth</option>
+              <option value="__other__">Other</option>
+            </select>
+            <input type="text" id="f-semester-other" placeholder="Enter semester" style="display:none; margin-top:8px;">
+          </div>
+          <div class="form-group">
+            <label for="f-academic-year">Academic Year</label>
+            <input type="text" id="f-academic-year" placeholder="e.g. 2025-2026" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="f-department">Department (short form for cert)</label>
+          <input type="text" id="f-department" placeholder="e.g. CS&E" required>
+        </div>
+
+        <div class="form-group">
+          <label for="f-department-full">Department (full name)</label>
+          <input type="text" id="f-department-full" placeholder="e.g. Computer Science & Engineering" required>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <!-- Student Details -->
+        <h4>Student Details</h4>
+        <div id="students-container">
+          <div class="student-entry">
+            <div class="form-row">
+              <div class="form-group"><label>Name</label><input type="text" class="s-name" placeholder="Student 1 Name" required></div>
+              <div class="form-group"><label>USN</label><input type="text" class="s-usn" placeholder="1DB23CS001" required></div>
+              <button type="button" class="btn-remove-student" title="Remove">&times;</button>
+            </div>
+          </div>
+        </div>
+        <button type="button" id="btn-add-student" class="btn-add-student">+ Add Student</button>
+
+        <hr class="sidebar-divider">
+
+        <!-- Guide Details -->
+        <h4>Guide Details</h4>
+        <div class="form-group">
+          <label for="f-guide-name">Guide Name</label>
+          <input type="text" id="f-guide-name" placeholder="e.g. HEMALATHA M" required>
+        </div>
+        <div class="form-group">
+          <label for="f-guide-title">Designation</label>
+          <input type="text" id="f-guide-title" placeholder="e.g. Assistant Professor" required>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <!-- HOD Details -->
+        <h4>HOD Details</h4>
+        <div class="form-group">
+          <label for="f-hod-name">HOD Name</label>
+          <input type="text" id="f-hod-name" placeholder="e.g. Dr. K B ShivaKumar" required>
+        </div>
+        <div class="form-group">
+          <label for="f-hod-qualification">Qualification</label>
+          <input type="text" id="f-hod-qualification" placeholder="e.g. B.E, M.E, M.B.A, M.Phil, Ph.D" required>
+        </div>
+        <div class="form-group">
+          <label for="f-hod-title">Designation</label>
+          <input type="text" id="f-hod-title" placeholder="e.g. Professor and Head" required>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <!-- Principal Details -->
+        <h4>Principal Details</h4>
+        <div class="form-group">
+          <label for="f-principal-name">Principal Name</label>
+          <input type="text" id="f-principal-name" placeholder="e.g. Dr. Naghabhushana B S" required>
+        </div>
+        <div class="form-group">
+          <label for="f-principal-qualification">Qualification</label>
+          <input type="text" id="f-principal-qualification" placeholder="e.g. B.E, M.Tech, Ph.D" required>
+        </div>
+
+        <hr class="sidebar-divider">
+
+        <!-- Project Coordinator (for acknowledgement) -->
+        <h4>Project Coordinator</h4>
+        <div class="form-group">
+          <label for="f-coordinator-name">Coordinator Name</label>
+          <input type="text" id="f-coordinator-name" placeholder="e.g. Dr. Hemanth Kumar N P">
+        </div>
+        <div class="form-group">
+          <label for="f-coordinator-title">Designation</label>
+          <input type="text" id="f-coordinator-title" placeholder="e.g. Associate Professor">
+        </div>
+      </form>
+
+      <div class="sidebar-footer">
+        <button id="btn-fill-demo" class="btn-secondary" type="button" style="background:#fef3c7;border-color:#f59e0b;color:#92400e;">⚡ Fill Demo Data</button>
+        <div class="page-select">
+          <label class="merge-label">Pages to download</label>
+          <div class="page-checkboxes">
+            <label><input type="checkbox" class="page-cb" value="0" checked> Title</label>
+            <label><input type="checkbox" class="page-cb" value="1" checked> Certificate</label>
+            <label><input type="checkbox" class="page-cb" value="2" checked> Declaration</label>
+            <label><input type="checkbox" class="page-cb" value="3" checked> Acknowledgement</label>
+          </div>
+        </div>
+        <button id="btn-download" class="btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download PDF (4 Pages)
+        </button>
+
+        <div class="merge-section">
+          <label class="merge-label">Attach remaining report PDF (optional)</label>
+          <input type="file" id="f-upload-pdf" accept=".pdf" style="display:none">
+          <label class="upload-area" id="upload-label" for="f-upload-pdf">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span id="upload-filename">Click to upload PDF</span>
+          </label>
+          <button id="btn-merge" class="btn-merge" disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"></path><path d="M18 2h4v4"></path><path d="M22 2L11 13"></path></svg>
+            Merge & Download PDF
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Preview Area -->
+    <main class="preview-area">
+      <div class="preview-toolbar">
+        <span>Live Preview (4 Pages)</span>
+        <div class="zoom-controls">
+          <button id="btn-zoom-out" title="Zoom Out">-</button>
+          <span id="zoom-level">60%</span>
+          <button id="btn-zoom-in" title="Zoom In">+</button>
+        </div>
+      </div>
+      <div class="preview-wrapper">
+        <div id="template-root" class="page-template">
+          
+          <!-- ═══════ PAGE 1: TITLE PAGE ═══════ -->
+          <div class="page" id="page-1">
+            <div class="page-border">
+              <div class="corner-bl"></div>
+              <div class="corner-br"></div>
+            </div>
+            <div class="page-content">
+              <div class="tp-university-name">VISVESVARAYA TECHNOLOGICAL UNIVERSITY</div>
+              <div class="tp-university-addr">&ldquo;Jnana Sangama&rdquo;, Belagavi-590018</div>
+
+              <div class="logo-container">
+                <img src="VTU.png" class="vtu-logo" alt="VTU Logo">
+              </div>
+
+              <div class="tp-report-line">A Project Report (<span id="t-phase"></span>)</div>
+              <div class="tp-on">on</div>
+              <div class="tp-project-title" id="t-project-title"></div>
+
+              <div class="tp-italic">Submitted in partial fulfilment of the requirements for the award of the Degree of</div>
+              <div class="tp-degree" id="t-degree"></div>
+              <div class="tp-in">in</div>
+              <div class="tp-branch" id="t-branch"></div>
+              <div class="tp-by">by</div>
+
+              <div class="tp-students-table" id="t-students-table"></div>
+
+              <div class="tp-guidance-section">
+                <div class="tp-italic">Under the Guidance of</div>
+                <div class="tp-guide-name" id="t-guide-name-p1"></div>
+                <div class="tp-guide-info" id="t-guide-title-p1"></div>
+                <div class="tp-guide-info" id="t-guide-dept-p1"></div>
+              </div>
+
+              <div class="logo-container">
+                <img src="dblogo.png" class="dbit-logo" alt="DBIT Logo">
+              </div>
+
+              <div class="tp-footer">
+                <div class="tp-college-name">DON BOSCO INSTITUTE OF TECHNOLOGY</div>
+                <div class="tp-dept-name">DEPARTMENT OF <span id="t-department-upper"></span></div>
+                <div class="tp-address">Kumbalagodu,Mysuru Road, Bengaluru-560074</div>
+                <div class="tp-year" id="t-academic-year"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════ PAGE 2: CERTIFICATE ═══════ -->
+          <div class="page" id="page-2">
+            <div class="page-border">
+              <div class="corner-bl"></div>
+              <div class="corner-br"></div>
+            </div>
+            <div class="page-content">
+              <div class="cert-header">
+                <div class="cert-college-name">DON BOSCO INSTITUTE OF TECHNOLOGY</div>
+                <div class="cert-address">Kumbalagodu, Mysore Road, Bangalore-560 074</div>
+                <div class="cert-dept">DEPARTMENT OF <span id="t2-department-upper"></span></div>
+              </div>
+
+              <div class="logo-container">
+                <img src="dblogo.png" class="dbit-logo" alt="DBIT Logo">
+              </div>
+
+              <div class="cert-title">CERTIFICATE</div>
+              <div class="cert-underline"></div>
+
+              <div class="cert-body" id="t-cert-body"></div>
+
+              <div class="cert-signatures">
+                <div class="cert-sig-block">
+                  <div class="cert-sig-label">Signature of Guide</div>
+                  <div class="cert-sig-dots">...................................</div>
+                  <div class="cert-sig-name" id="t2-guide-name"></div>
+                  <div class="cert-sig-info" id="t2-guide-title-cert"></div>
+                  <div class="cert-sig-info" id="t2-guide-dept"></div>
+                </div>
+                <div class="cert-sig-block">
+                  <div class="cert-sig-label">Signature of HOD</div>
+                  <div class="cert-sig-dots">..................................</div>
+                  <div class="cert-sig-name" id="t2-hod-name"></div>
+                  <div class="cert-sig-info cert-sig-italic" id="t2-hod-qualification"></div>
+                  <div class="cert-sig-info" id="t2-hod-title"></div>
+                  <div class="cert-sig-info" id="t2-hod-dept"></div>
+                </div>
+                <div class="cert-sig-block">
+                  <div class="cert-sig-label">Signature of Principal</div>
+                  <div class="cert-sig-dots">................................</div>
+                  <div class="cert-sig-name" id="t2-principal-name"></div>
+                  <div class="cert-sig-info cert-sig-italic" id="t2-principal-qualification"></div>
+                  <div class="cert-sig-info">Principal, DBIT</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════ PAGE 3: DECLARATION ═══════ -->
+          <div class="page" id="page-3">
+            <div class="page-border">
+              <div class="corner-bl"></div>
+              <div class="corner-br"></div>
+            </div>
+            <div class="page-content">
+              <div class="decl-header">
+                <div class="decl-college-name">DON BOSCO INSTITUTE OF TECHNOLOGY</div>
+                <div class="decl-address">Kumbalagodu, Mysuru Road, Bengaluru-560074</div>
+                <div class="decl-dept">DEPARTMENT OF <span id="t3-department-upper"></span></div>
+              </div>
+
+              <div class="logo-container">
+                <img src="dblogo.png" class="dbit-logo" alt="DBIT Logo">
+              </div>
+
+              <div class="decl-title">DECLARATION</div>
+
+              <div class="decl-body" id="t-decl-body"></div>
+
+              <div class="decl-footer">
+                <div class="decl-place"><strong>Place: Bengaluru</strong></div>
+                <div class="decl-student-sigs" id="t-decl-students"></div>
+              </div>
+
+              <div class="page-number-section">
+                <div class="pn-line"></div>
+                <div class="pn-num">i</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════ PAGE 4: ACKNOWLEDGEMENT ═══════ -->
+          <div class="page" id="page-4">
+            <div class="page-border">
+              <div class="corner-bl"></div>
+              <div class="corner-br"></div>
+            </div>
+            <div class="page-content">
+              <div class="ack-title">ACKNOWLEDGEMENT</div>
+
+              <div class="ack-body" id="t-ack-body"></div>
+
+              <div class="page-number-section">
+                <div class="pn-line"></div>
+                <div class="pn-num">ii</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="project-report-script.js?v=2"></script>
+</body>
+</html>
