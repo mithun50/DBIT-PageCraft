@@ -52,10 +52,10 @@ The app uses Supabase for analytics logging and a secured admin dashboard.
 
 | Action | Auth | Policy |
 |--------|------|--------|
-| Logging a generation (insert) | `anon` key | Public — anyone can insert |
+| Logging a generation (insert) | `anon` key | Public - anyone can insert |
 | Reading analytics (select) | Authenticated user | Email/password sign-in required |
 
-The admin panel at `/admin` uses Supabase Auth — no hardcoded passwords.
+The admin panel at `/admin` uses Supabase Auth - no hardcoded passwords.
 
 ## Deployment
 
@@ -63,11 +63,11 @@ Configured for zero-config deployment on **Vercel**. The included `vercel.json` 
 
 ## Team
 
-- **Mithun Gowda B** — Creator & Developer — [mithungowda.b7411@gmail.com](mailto:mithungowda.b7411@gmail.com)
+- **Mithun Gowda B** - Creator & Developer - [mithungowda.b7411@gmail.com](mailto:mithungowda.b7411@gmail.com)
 - **Naren V**
 - **Harsha N**
 - **Nevil Anson DSouza**
-- **Manas Kiran Habbu** — Marketing
+- **Manas Kiran Habbu** - Marketing
 - **Lekhan H R**
 
 *Don Bosco Institute of Technology, Bengaluru*

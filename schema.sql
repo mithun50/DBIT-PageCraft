@@ -1,4 +1,4 @@
--- DBIT AFPG — Supabase Schema
+-- DBIT PageCraft - Supabase Schema
 -- Run this in Supabase Dashboard → SQL Editor
 
 create table if not exists generations (
@@ -19,8 +19,8 @@ create table if not exists generations (
 -- Enable Row Level Security
 alter table generations enable row level security;
 
--- Anyone (anon) can insert — used by the client-side analytics logger
+-- Anyone (anon) can insert - used by the client-side analytics logger
 create policy "anon_insert" on generations for insert with check (true);
 
--- Only authenticated users can read — secures the admin panel
+-- Only authenticated users can read - secures the admin panel
 create policy "auth_select" on generations for select using (auth.role() = 'authenticated');

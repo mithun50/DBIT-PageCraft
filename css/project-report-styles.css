@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Project Report Generator — Base & App Styles
+   Project Report Generator - Base & App Styles
    ========================================================================== */
 :root {
   --bg-color: #f8fafc;
@@ -219,7 +219,7 @@ select {
 }
 
 /* ==========================================================================
-   A4 PAGE TEMPLATE — Exact PDF Replica
+   A4 PAGE TEMPLATE - Exact PDF Replica
    ========================================================================== */
 #template-root {
   transform-origin: top center;
@@ -249,7 +249,7 @@ select {
   outline-offset: 3px;
 }
 
-/* Corner squares — filled blue squares at each corner */
+/* Corner squares - filled blue squares at each corner */
 .page-border::before,
 .page-border::after,
 .corner-bl,

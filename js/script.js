@@ -79,7 +79,7 @@ function wrapAt26(str) {
 
   for (const word of words) {
     if (!current) {
-      // Word itself exceeds limit — hard break it
+      // Word itself exceeds limit - hard break it
       if (word.length > MAX) {
         let remaining = word;
         while (remaining.length > MAX) {
@@ -213,7 +213,7 @@ async function capturePageDesktopMode(renderScale) {
     // Step 3: Wait for full browser reflow
     await new Promise(r => setTimeout(r, 400));
 
-    // Step 4: Capture the live element — it's now in "desktop" layout
+    // Step 4: Capture the live element - it's now in "desktop" layout
     const pageEl = document.querySelector('#template-root .page');
     const canvas = await html2canvas(pageEl, {
       scale: renderScale,
@@ -232,7 +232,7 @@ async function capturePageDesktopMode(renderScale) {
     return canvas;
 
   } finally {
-    // Step 5: Always restore — even if capture fails
+    // Step 5: Always restore - even if capture fails
     if (viewportMeta && originalViewport) viewportMeta.content = originalViewport;
     templateRoot.style.transform = originalTransform;
     // Re-apply the correct zoom level for the current device

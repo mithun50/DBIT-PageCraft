@@ -144,7 +144,7 @@ function updatePreview() {
   setText('t2-principal-name', principalName);
   setText('t2-principal-qualification', principalQualification);
 
-  // Certificate body — exact wording from PDF
+  // Certificate body - exact wording from PDF
   const studentsStrCert = students.map(s => `<strong>${esc(s.name)} (${esc(s.usn)})</strong>`).join(', ');
   document.getElementById('t-cert-body').innerHTML =
     `<p>This is to certify that the Project Work \u201C<strong>${esc(projectTitle)}</strong>\u201D has been carried out by ${studentsStrCert || '________'} the bonafide students of <strong>Don Bosco Institute of Technology, Bengaluru</strong>, in the partial fulfillment for award of Degree of <strong>${esc(degree)} in ${esc(branch)}</strong> of <strong>Visvesvaraya Technological University, Belagavi</strong>, during the academic year ${esc(academicYear)}. The Project Work has been approved as it satisfies the academic requirements in respect of the Project Work prescribed for the ${esc(degree)} Degree.</p>`;
@@ -152,7 +152,7 @@ function updatePreview() {
   // ══════════ PAGE 3: DECLARATION ══════════
   setText('t3-department-upper', deptUpper);
 
-  // Declaration body — exact wording from PDF
+  // Declaration body - exact wording from PDF
   const studentsStrDecl = students.map(s => `<strong>${esc(s.name)} (${esc(s.usn)})</strong>`).join(', ');
   document.getElementById('t-decl-body').innerHTML =
     `<p>We, ${studentsStrDecl || '________'} students of ${esc(semester)} semester B.E, at the Department of ${esc(branch)}, Don Bosco Institute of Technology, Bengaluru, declare that the Project Work entitled \u201C<strong>${esc(projectTitle)}</strong>\u201D has been carried out by us and submitted in partial fulfillment of the course requirements for the award of degree in <strong>${esc(degree)}</strong> in <strong>${esc(branch)}</strong> of <strong>Visvesvaraya Technological University, Belagavi</strong> during the academic year <strong>${esc(academicYear)}</strong>. The Project Work has been approved as it satisfies the academic requirements for the award of ${esc(degree)} Degree.</p>`;
