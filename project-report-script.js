@@ -361,3 +361,86 @@ document.getElementById('btn-fill-demo').addEventListener('click', () => {
 
   updatePreview();
 });
+
+// ── URL Parameters API ──
+// Usage: /project-report?title=...&phase=...&degree=...&branch=...&semester=...&year=...&dept=...&deptFull=...&guide=...&guideTitle=...&hod=...&hodQual=...&hodTitle=...&principal=...&principalQual=...&coordinator=...&coordinatorTitle=...&students=Name1:USN1,Name2:USN2&download=true&pages=0,1,2,3
+(function loadFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('title') && !params.has('download')) return;
+
+  const fieldMap = {
+    title: 'f-project-title',
+    phase: 'f-phase',
+    degree: 'f-degree',
+    branch: 'f-branch',
+    semester: 'f-semester',
+    year: 'f-academic-year',
+    dept: 'f-department',
+    deptFull: 'f-department-full',
+    guide: 'f-guide-name',
+    guideTitle: 'f-guide-title',
+    hod: 'f-hod-name',
+    hodQual: 'f-hod-qualification',
+    hodTitle: 'f-hod-title',
+    principal: 'f-principal-name',
+    principalQual: 'f-principal-qualification',
+    coordinator: 'f-coordinator-name',
+    coordinatorTitle: 'f-coordinator-title',
+  };
+
+  // Fill fields
+  for (const [param, elId] of Object.entries(fieldMap)) {
+    const val = params.get(param);
+    if (!val) continue;
+    const el = document.getElementById(elId);
+    if (!el) continue;
+    if (el.tagName === 'SELECT') {
+      // Try to match an option, otherwise use __other__
+      const opt = [...el.options].find(o => o.value === val);
+      if (opt) { el.value = val; }
+      else {
+        el.value = '__other__';
+        const otherInput = document.getElementById(elId + '-other');
+        if (otherInput) { otherInput.style.display = 'block'; otherInput.value = val; }
+      }
+    } else {
+      el.value = val;
+    }
+  }
+
+  // Students: format "Name1:USN1,Name2:USN2"
+  const studentsParam = params.get('students');
+  if (studentsParam) {
+    studentsContainer.innerHTML = '';
+    studentsParam.split(',').forEach(s => {
+      const [name, usn] = s.split(':');
+      if (!name) return;
+      const div = document.createElement('div');
+      div.className = 'student-entry';
+      div.innerHTML = `<div class="form-row">
+        <div class="form-group"><label>Name</label><input type="text" class="s-name" value="${name.trim()}" required></div>
+        <div class="form-group"><label>USN</label><input type="text" class="s-usn" value="${(usn||'').trim()}" required></div>
+        <button type="button" class="btn-remove-student" title="Remove">&times;</button>
+      </div>`;
+      studentsContainer.appendChild(div);
+      div.querySelectorAll('input').forEach(inp => inp.addEventListener('input', updatePreview));
+      div.querySelector('.btn-remove-student').addEventListener('click', () => { div.remove(); updatePreview(); });
+    });
+  }
+
+  // Pages selection
+  const pagesParam = params.get('pages');
+  if (pagesParam) {
+    const selected = pagesParam.split(',').map(Number);
+    document.querySelectorAll('.page-cb').forEach(cb => {
+      cb.checked = selected.includes(parseInt(cb.value));
+    });
+  }
+
+  updatePreview();
+
+  // Auto-download
+  if (params.get('download') === 'true') {
+    setTimeout(() => document.getElementById('btn-download').click(), 1000);
+  }
+})();

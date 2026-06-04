@@ -379,3 +379,50 @@ mergeBtn.addEventListener('click', async () => {
     mergeBtn.disabled = false;
   }
 });
+
+// ── URL Parameters API ──
+// Usage: /?topic=...&subject=...&code=...&degree=...&branch=...&name=...&usn=...&semester=...&section=...&guide=...&guideTitle=...&guideDept=...&download=pdf|png
+(function loadFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('topic') && !params.has('download')) return;
+
+  const fieldMap = {
+    topic: 'f-report-topic',
+    subject: 'f-subject-name',
+    code: 'f-subject-code',
+    degree: 'f-degree',
+    branch: 'f-branch',
+    name: 'f-student-name',
+    usn: 'f-usn',
+    semester: 'f-semester',
+    section: 'f-section',
+    guide: 'f-guide-name',
+    guideTitle: 'f-guide-title',
+    guideDept: 'f-guide-dept',
+  };
+
+  for (const [param, elId] of Object.entries(fieldMap)) {
+    const val = params.get(param);
+    if (!val) continue;
+    const el = document.getElementById(elId);
+    if (!el) continue;
+    if (el.tagName === 'SELECT') {
+      const opt = [...el.options].find(o => o.value === val);
+      if (opt) { el.value = val; }
+      else {
+        el.value = '__other__';
+        const otherInput = document.getElementById(elId + '-other');
+        if (otherInput) { otherInput.style.display = 'block'; otherInput.value = val; }
+      }
+      el.dispatchEvent(new Event('input'));
+    } else {
+      el.value = val;
+      el.dispatchEvent(new Event('input'));
+    }
+  }
+
+  // Auto-download
+  const dl = params.get('download');
+  if (dl === 'pdf') setTimeout(() => document.getElementById('btn-download').click(), 1000);
+  if (dl === 'png') setTimeout(() => document.getElementById('btn-export-png').click(), 1000);
+})();
