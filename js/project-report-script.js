@@ -1,5 +1,33 @@
 // ── Project Report Generator Script ─────────────────────────────────────────
 
+// ── Analytics ──
+const SUPABASE_URL = 'https://jkhxpdsyouecsjresikt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0';
+
+async function logGeneration(type) {
+  try {
+    const students = getStudents();
+    await fetch(`${SUPABASE_URL}/rest/v1/generations`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        page: 'project-report',
+        type,
+        student_name: students[0]?.name || '',
+        usn: students[0]?.usn || '',
+        subject: document.getElementById('f-project-title')?.value || '',
+        semester: getVal('semester'),
+        branch: getVal('branch'),
+      })
+    });
+  } catch (_) {}
+}
+
 // ── "Other" fields ──
 const otherFields = {
   phase:    { select: document.getElementById('f-phase'),    input: document.getElementById('f-phase-other') },
@@ -233,6 +261,7 @@ document.getElementById('btn-download').addEventListener('click', async () => {
     const students = getStudents();
     const fileName = `Project_Report_${(students[0]?.name || 'Report').replace(/\s+/g, '_')}.pdf`;
     pdf.save(fileName);
+    logGeneration('REPORT_PDF');
   } catch (error) {
     console.error('Error generating PDF:', error);
     alert('Failed to generate PDF. Please try again.');
@@ -306,6 +335,7 @@ mergeBtn.addEventListener('click', async () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    logGeneration('REPORT_MERGE');
   } catch (err) {
     console.error('Merge failed:', err);
     alert('Failed to merge PDFs. Please try again.');

@@ -1,26 +1,30 @@
 // ── Analytics Config ─────────────────────────────────────────────────────────
-// Paste your Google Apps Script Web App URL here (the one that logs to Sheets)
-const SHEET_LOG_URL = 'https://script.google.com/macros/s/AKfycbxMW5p8THMgpLFtzMTxDof4ftil55Ac9UDSAJfIb_YrbTyuEFGhN6NJNsVkC8JmVgSTUA/exec';
+const SUPABASE_URL = 'https://jkhxpdsyouecsjresikt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0';
 
 async function logGeneration(type) {
-  if (!SHEET_LOG_URL || SHEET_LOG_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL') return;
   try {
-    await fetch(SHEET_LOG_URL, {
+    await fetch(`${SUPABASE_URL}/rest/v1/generations`, {
       method: 'POST',
-      mode: 'no-cors', // Apps Script doesn't need CORS preflight for POST
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
       body: JSON.stringify({
+        page: 'front-page',
         type,
-        studentName: formEls.studentName?.value || '',
-        usn:         formEls.usn?.value         || '',
-        subject:     formEls.subjectName?.value || '',
-        subjectCode: formEls.subjectCode?.value || '',
-        topic:       formEls.reportTopic?.value || '',
-        semester:    formEls.semester?.value    || '',
-        section:     formEls.section?.value     || '',
+        student_name: formEls.studentName?.value || '',
+        usn: formEls.usn?.value || '',
+        subject: formEls.subjectName?.value || '',
+        subject_code: formEls.subjectCode?.value || '',
+        topic: formEls.reportTopic?.value || '',
+        semester: formEls.semester?.value || '',
+        section: formEls.section?.value || '',
       })
     });
-  } catch (_) { /* silent fail — never block the user */ }
+  } catch (_) { /* silent fail */ }
 }
 // ─────────────────────────────────────────────────────────────────────────────
 

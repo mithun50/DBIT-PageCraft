@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DBIT Front Page Generator</title>
-  <link rel="stylesheet" href="styles.css?v=10">
+  <title>DBIT PageCraft — Assignment Front Page Generator</title>
+  <link rel="stylesheet" href="css/styles.css?v=10">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -22,12 +22,17 @@
     <!-- Sidebar Form -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <h2>DBIT Front Page</h2>
-        <p>Fill in your details. We generate a perfectly crisp, 100% clean PDF instantly.</p>
+        <h2>DBIT PageCraft</h2>
+        <p>Generate perfectly formatted academic documents for DBIT, VTU.</p>
         <div class="header-links">
-          <p class="creator-credit">By <strong>Mithun Gowda B</strong></p>
-          <p class="marketing-credit">Marketing <strong>Manas Kiran Habbu</strong></p>
-          <a href="https://github.com/mithun50/B25CHE22B-AFPG" target="_blank" class="header-badge github-link" title="View Source on GitHub">
+          <div class="team-section">
+            <p class="team-label">Team</p>
+            <div class="team-names">
+              <span>Mithun Gowda B</span><span>Naren V</span><span>Harsha N</span><span>Nevil Anson DSouza</span><span>Manas Kiran Habbu</span><span>Lekhan H R</span>
+            </div>
+            <p class="acknowledgement">Templates provided by <strong>Mahesh Kumar G</strong></p>
+          </div>
+          <a href="https://github.com/mithun50/DBIT-PageCraft" target="_blank" class="header-badge github-link" title="View Source on GitHub">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
             GitHub
           </a>
@@ -35,10 +40,17 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             Mail
           </a>
-          <a href="/project-report" class="header-badge" style="color:#065f46;background:#d1fae5;" title="Major Project Report Generator">
-            📄 Project Report
-          </a>
         </div>
+        <nav class="page-nav">
+          <a href="/" class="page-nav-tab active">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Assignment Front Page
+          </a>
+          <a href="/project-report" class="page-nav-tab">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            Project Report
+          </a>
+        </nav>
       </div>
 
       <form id="generator-form">
@@ -143,31 +155,29 @@
           <label for="f-guide-dept">Department</label>
           <input type="text" id="f-guide-dept" placeholder="e.g. Department of Chemistry" required>
         </div>
-      </form>
-
-      <div class="sidebar-footer">
-        <button id="btn-export-png" class="btn-secondary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-          Export as PNG
-        </button>
-        <button id="btn-download" class="btn-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          Download PDF
-        </button>
-
-        <div class="merge-section">
-          <label class="merge-label">Attach Assignment PDF (optional)</label>
-          <input type="file" id="f-upload-pdf" accept=".pdf" style="display:none">
-          <label class="upload-area" id="upload-label" for="f-upload-pdf">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-            <span id="upload-filename">Click to upload PDF</span>
-          </label>
-          <button id="btn-merge" class="btn-merge" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"></path><path d="M18 2h4v4"></path><path d="M22 2L11 13"></path></svg>
-            Merge & Download PDF
+        <div class="sidebar-actions">
+          <button id="btn-export-png" class="btn-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            Export as PNG
           </button>
+          <button id="btn-download" class="btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Download PDF
+          </button>
+          <div class="merge-section">
+            <label class="merge-label">Attach Assignment PDF (optional)</label>
+            <input type="file" id="f-upload-pdf" accept=".pdf" style="display:none">
+            <label class="upload-area" id="upload-label" for="f-upload-pdf">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              <span id="upload-filename">Click to upload PDF</span>
+            </label>
+            <button id="btn-merge" class="btn-merge" disabled>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"></path><path d="M18 2h4v4"></path><path d="M22 2L11 13"></path></svg>
+              Merge & Download PDF
+            </button>
+          </div>
         </div>
-      </div>
+      </form>
     </aside>
 
     <!-- Preview Area -->
@@ -196,7 +206,7 @@
 
                 <!-- VTU Logo Placeholder -->
                 <div class="logo-container vtu-container">
-                  <img src="VTU.png" class="vtu-logo" alt="VTU Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDAiIGhlaWdodD0iMTQwIj48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSI2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzljYTNhZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCI+VlRVIExvZ288L3RleHQ+PC9zdmc+'">
+                  <img src="assets/VTU.png" class="vtu-logo" alt="VTU Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDAiIGhlaWdodD0iMTQwIj48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSI2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzljYTNhZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCI+VlRVIExvZ288L3RleHQ+PC9zdmc+'">
                 </div>
 
                 <!-- Topic & Subject -->
@@ -215,7 +225,7 @@
 
                 <!-- DBIT Logo Placeholder -->
                 <div class="logo-container dbit-container">
-                  <img src="dblogo.png" class="dbit-logo" alt="DBIT Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDAiIGhlaWdodD0iMTQwIj48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSI2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzljYTNhZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCI+REJJVCBMb2dvPC90ZXh0Pjwvc3ZnPg=='">
+                  <img src="assets/dblogo.png" class="dbit-logo" alt="DBIT Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDAiIGhlaWdodD0iMTQwIj48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSI2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzljYTNhZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCI+REJJVCBMb2dvPC90ZXh0Pjwvc3ZnPg=='">
                 </div>
 
                 <div class="footer-columns">
@@ -256,6 +266,6 @@
     </main>
   </div>
 
-  <script src="script.js?v=10"></script>
+  <script src="js/script.js?v=10"></script>
 </body>
 </html>

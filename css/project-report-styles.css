@@ -45,7 +45,13 @@ body {
 .sidebar-header h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
 .sidebar-header p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.4; }
 
-.header-links { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.header-links { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.team-section { width: 100%; margin-top: 8px; }
+.team-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.team-names { display: flex; flex-wrap: wrap; gap: 5px; }
+.team-names span { font-size: 0.72rem; background: #e0e7ff; color: var(--primary-color); padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+.acknowledgement { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+.acknowledgement strong { color: var(--text-main); font-weight: 600; }
 .creator-credit {
   font-size: 0.8rem !important;
   color: var(--primary-color) !important;
@@ -61,6 +67,14 @@ body {
 }
 .github-link { color: var(--text-main); background: #e2e8f0; }
 .github-link:hover { background: #cbd5e1; }
+.mail-link { color: #92400e; background: #fef3c7; }
+.mail-link:hover { background: #fde68a; }
+
+/* ── Page Nav ── */
+.page-nav { display: flex; gap: 0; margin-top: 14px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+.page-nav-tab { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 12px; font-size: 0.8rem; font-weight: 600; text-decoration: none; color: var(--text-muted); background: var(--sidebar-bg); transition: all 0.2s; }
+.page-nav-tab:hover { background: #1e293b; color: #fff; }
+.page-nav-tab.active { background: var(--primary-color); color: #fff; pointer-events: none; }
 
 /* ── Form ── */
 #generator-form {
@@ -121,6 +135,13 @@ select {
 /* ── Footer Buttons ── */
 .sidebar-footer {
   padding: 18px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.sidebar-actions {
+  margin-top: 12px;
+  padding-top: 16px;
   border-top: 1px solid var(--border-color);
   display: flex; flex-direction: column; gap: 10px;
 }
