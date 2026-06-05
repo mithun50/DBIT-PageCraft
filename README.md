@@ -74,7 +74,7 @@ Configured for zero-config deployment on **Vercel**. The included `vercel.json` 
 
 ## Acknowledgement
 
-Templates provided by **Mahesh Kumar G**
+Credits: **Mahesh Kumar G**
 
 ## License
 

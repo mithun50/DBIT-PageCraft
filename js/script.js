@@ -3,28 +3,35 @@ const SUPABASE_URL = 'https://jkhxpdsyouecsjresikt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0';
 
 async function logGeneration(type) {
+  const url = `${SUPABASE_URL}/rest/v1/generations`;
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+  const base = {
+    page: 'front-page',
+    type,
+    student_name: formEls.studentName?.value || '',
+    usn: formEls.usn?.value || '',
+    subject: formEls.subjectName?.value || '',
+    subject_code: formEls.subjectCode?.value || '',
+    topic: formEls.reportTopic?.value || '',
+    semester: formEls.semester?.value || '',
+    section: formEls.section?.value || '',
+  };
+  const email = (window.EmailGate && EmailGate.get()) || '';
   try {
-    await fetch(`${SUPABASE_URL}/rest/v1/generations`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        page: 'front-page',
-        type,
-        student_name: formEls.studentName?.value || '',
-        usn: formEls.usn?.value || '',
-        subject: formEls.subjectName?.value || '',
-        subject_code: formEls.subjectCode?.value || '',
-        topic: formEls.reportTopic?.value || '',
-        semester: formEls.semester?.value || '',
-        section: formEls.section?.value || '',
-      })
-    });
+    let res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(Object.assign({ email }, base)) });
+    // If the DB has no `email` column yet, retry without it so logging still works.
+    if (!res.ok) { await fetch(url, { method: 'POST', headers, body: JSON.stringify(base) }); }
   } catch (_) { /* silent fail */ }
+}
+
+// Ask for email on the first export, then remember it (see js/email-gate.js)
+if (window.EmailGate) {
+  EmailGate.gate('#btn-download, #btn-export-png, #btn-merge, #btn-export-docx, #btn-export-doc');
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -214,7 +221,7 @@ async function capturePageDesktopMode(renderScale) {
     await new Promise(r => setTimeout(r, 400));
 
     // Step 4: Capture the live element - it's now in "desktop" layout
-    const pageEl = document.querySelector('#template-root .page');
+    const pageEl = getActivePageEl();
     const canvas = await html2canvas(pageEl, {
       scale: renderScale,
       useCORS: true,
@@ -260,7 +267,7 @@ document.getElementById('btn-download').addEventListener('click', async () => {
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
-    const fileName = `Chemistry_Front_Page_${formEls.studentName.value.replace(/\s+/g, '_')}.pdf`;
+    const fileName = frontFileBase() + '.pdf';
     pdf.save(fileName);
     logGeneration('PDF');
 
@@ -287,7 +294,7 @@ document.getElementById('btn-export-png').addEventListener('click', async () => 
 
     const a = document.createElement('a');
     a.href = imgData;
-    a.download = `Chemistry_Front_Page_${formEls.studentName.value.replace(/\s+/g, '_')}.png`;
+    a.download = frontFileBase() + '.png';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -368,7 +375,7 @@ mergeBtn.addEventListener('click', async () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Chemistry_Assignment_${formEls.studentName.value.replace(/\s+/g, '_')}.pdf`;
+    a.download = frontFileBase() + '_merged.pdf';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -384,8 +391,298 @@ mergeBtn.addEventListener('click', async () => {
   }
 });
 
+// ─── Word Export (.doc / .docx) ───────────────────────────────────────────────
+// Builds editable, Word-compatible HTML mirroring the front-page layout (A4,
+// Times New Roman, double border) and exports it via the shared WordExport helper.
+function frameFrontPage(innerHtml) {
+  // Double border: thick outer table + thin inner table (matches the 4px/2px frame).
+  return '<table width="100%" cellspacing="0" cellpadding="0" style="border:3pt solid #000;">' +
+    '<tr><td style="padding:4pt;">' +
+    '<table width="100%" cellspacing="0" cellpadding="0" style="border:1.5pt solid #000;">' +
+    '<tr><td style="padding:26pt 30pt;">' + innerHtml + '</td></tr></table>' +
+    '</td></tr></table>';
+}
+
+function buildFrontPageWordBody() {
+  const E = WordExport.esc;
+  const P = WordExport.p;
+
+  const topic       = formEls.reportTopic.value;
+  const subjectName = formEls.subjectName.value;
+  const subjectCode = formEls.subjectCode.value;
+  const degree      = getFieldValue('degree');
+  const branch      = getFieldValue('branch');
+  const studentName = formEls.studentName.value;
+  const usn         = formEls.usn.value;
+  const semester    = getFieldValue('semester');
+  const section     = formEls.section.value;
+  const guideName   = formEls.guideName.value;
+  const guideTitle  = formEls.guideTitle.value;
+  const guideDept   = formEls.guideDept.value;
+
+  const vtu  = WordExport.getLogoDataURL('img.vtu-logo');
+  const dbit = WordExport.getLogoDataURL('img.dbit-logo');
+
+  let inner = '';
+  // Header
+  inner += P('DON BOSCO INSTITUTE OF TECHNOLOGY', { size: 18, bold: true, mb: 3, spacing: 0.4 });
+  inner += P('VISVESVARAYA TECHNOLOGY UNIVERSITY', { size: 12, mb: 3 });
+  inner += P('AN AUTONOMOUS INSTITUTION UNDER VTU', { size: 11, mb: 6 });
+  // VTU logo
+  inner += WordExport.img(vtu, 94);
+  // Topic & subject
+  inner += P(E(topic), { size: 13.5, mt: 12, mb: 8 });
+  inner += P('SUBJECT: ' + E(subjectName), { size: 13.5, bold: true, mb: 2 });
+  inner += P('SUBJECT CODE: ' + E(subjectCode), { size: 13.5, bold: true, mb: 10 });
+  // Degree info
+  inner += P(E(degree), { size: 13.5, mb: 2 });
+  inner += P('In', { size: 13.5, mb: 2 });
+  inner += P(E(branch), { size: 13.5, mb: 8 });
+  // DBIT logo
+  inner += WordExport.img(dbit, 98);
+  // Footer: two columns (student details | guide details)
+  inner += '<table width="100%" cellspacing="0" cellpadding="0" style="margin-top:16pt;"><tr>' +
+    '<td width="55%" style="vertical-align:top;">' +
+      P('Submitted By', { size: 13.5, align: 'left', mb: 6 }) +
+      P('Name: ' + E(studentName), { size: 13.5, align: 'left', mb: 6 }) +
+      P('USN: ' + E(usn), { size: 13.5, align: 'left', mb: 6 }) +
+      P('Sem: ' + E(semester) + (section ? ' ' + E(section) : ''), { size: 13.5, align: 'left', mb: 6 }) +
+    '</td>' +
+    '<td width="45%" style="vertical-align:top;">' +
+      P('Guided By:', { size: 13.5, align: 'left', mb: 6 }) +
+      P(E(guideName), { size: 13.5, align: 'left', mb: 6 }) +
+      P(E(guideTitle), { size: 13.5, align: 'left', mb: 6 }) +
+      P(E(guideDept), { size: 13.5, align: 'left', mb: 6 }) +
+    '</td>' +
+    '</tr></table>';
+
+  return frameFrontPage(inner);
+}
+
+function exportFrontPageWord(kind) {
+  if (currentTemplate === 'assignment') {
+    if (!validateRequiredFields()) return;
+    const body = buildFrontPageWordBody();
+    const base = frontFileBase();
+    const title = formEls.reportTopic.value || 'Assignment Front Page';
+    if (kind === 'docx') { WordExport.downloadDocx(base, body, { title }); logGeneration('DOCX'); }
+    else { WordExport.downloadDoc(base, body, { title }); logGeneration('DOC'); }
+  } else {
+    const body = buildActivityBookWordBody();
+    const base = frontFileBase();
+    const title = AB_TEMPLATES[currentTemplate].course + ' Activity Book';
+    if (kind === 'docx') { WordExport.downloadDocx(base, body, { title }); logGeneration('DOCX'); }
+    else { WordExport.downloadDoc(base, body, { title }); logGeneration('DOC'); }
+  }
+}
+
+document.getElementById('btn-export-docx').addEventListener('click', () => {
+  try { exportFrontPageWord('docx'); }
+  catch (e) { console.error('DOCX export failed:', e); alert('Failed to export .docx. Please try again.'); }
+});
+document.getElementById('btn-export-doc').addEventListener('click', () => {
+  try { exportFrontPageWord('doc'); }
+  catch (e) { console.error('DOC export failed:', e); alert('Failed to export .doc. Please try again.'); }
+});
+
+// ─── Template Switching (Assignment / Activity Book) ──────────────────────────
+let currentTemplate = 'assignment';
+
+const AB_TEMPLATES = {
+  idtl:    { course: 'Innovation and Design Thinking Lab',  code: '(B25IDTL18)', lastLabel: 'Name of the Mentor', yearPos: 'mid'  },
+  project: { course: 'Interdisciplinary Project Based Learning', code: '(B25PRJ28)', lastLabel: 'Name of the Guide',  yearPos: 'top' }
+};
+
+// Activity-book form field -> preview span bindings
+const abEls = {
+  name:        { input: document.getElementById('f-ab-name'),          out: document.getElementById('t-ab-name') },
+  usn:         { input: document.getElementById('f-ab-usn'),           out: document.getElementById('t-ab-usn') },
+  branch:      { input: document.getElementById('f-ab-branch'),        out: document.getElementById('t-ab-branch') },
+  section:     { input: document.getElementById('f-ab-section'),       out: document.getElementById('t-ab-section') },
+  semester:    { input: document.getElementById('f-ab-semester'),      out: document.getElementById('t-ab-semester') },
+  teamName:    { input: document.getElementById('f-ab-team-name'),     out: document.getElementById('t-ab-team-name') },
+  teamStrength:{ input: document.getElementById('f-ab-team-strength'), out: document.getElementById('t-ab-team-strength') },
+  mentor:      { input: document.getElementById('f-ab-mentor'),        out: document.getElementById('t-ab-mentor') }
+};
+const abYearInput = document.getElementById('f-ab-academic-year');
+
+function syncActivityYear() {
+  const meta = AB_TEMPLATES[currentTemplate] || AB_TEMPLATES.idtl;
+  const val = abYearInput.value.trim();
+  const topEl = document.getElementById('t-ab-year-top');
+  const midEl = document.getElementById('t-ab-year-mid');
+  if (meta.yearPos === 'top') {
+    topEl.textContent = val ? 'Academic Year: ' + val : '';
+    topEl.style.display = '';
+    midEl.style.display = 'none';
+    midEl.textContent = '';
+  } else {
+    midEl.textContent = val ? 'Academic Year: ' + val : '';
+    midEl.style.display = '';
+    topEl.style.display = 'none';
+    topEl.textContent = '';
+  }
+}
+
+// Bind activity inputs to preview
+Object.values(abEls).forEach(({ input, out }) => {
+  input.addEventListener('input', () => { out.textContent = input.value; });
+});
+abYearInput.addEventListener('input', syncActivityYear);
+
+function getActivePageEl() {
+  const pageKey = (currentTemplate === 'assignment') ? 'assignment' : 'activity';
+  return document.querySelector('#template-root .page[data-tpl="' + pageKey + '"]')
+      || document.querySelector('#template-root .page[data-tpl="assignment"]');
+}
+
+function frontFileBase() {
+  if (currentTemplate === 'assignment') {
+    return 'Chemistry_Front_Page_' + (formEls.studentName.value || 'Student').replace(/\s+/g, '_');
+  }
+  const tag = currentTemplate === 'project' ? 'Project' : 'IDTL';
+  return 'Activity_Book_' + tag + '_' + (abEls.name.input.value || 'Student').replace(/\s+/g, '_');
+}
+
+function setGroupDisabled(groupEl, disabled) {
+  groupEl.querySelectorAll('input, select, textarea').forEach(el => { el.disabled = disabled; });
+}
+
+function switchTemplate(tpl) {
+  currentTemplate = tpl;
+  const isAssignment = (tpl === 'assignment');
+
+  const asgFields = document.getElementById('assignment-fields');
+  const actFields = document.getElementById('activity-fields');
+  asgFields.style.display = isAssignment ? '' : 'none';
+  actFields.style.display = isAssignment ? 'none' : '';
+  // Disable hidden group's controls so they don't block form validation
+  setGroupDisabled(asgFields, !isAssignment);
+  setGroupDisabled(actFields, isAssignment);
+
+  // Toggle preview pages (idtl/project both use the single "activity" page)
+  const activePageKey = isAssignment ? 'assignment' : 'activity';
+  document.querySelectorAll('#template-root .page').forEach(pg => {
+    pg.style.display = (pg.getAttribute('data-tpl') === activePageKey) ? '' : 'none';
+  });
+
+  if (!isAssignment) {
+    const meta = AB_TEMPLATES[tpl];
+    document.getElementById('t-ab-course').textContent = meta.course;
+    document.getElementById('t-ab-code').textContent = meta.code;
+    document.getElementById('t-ab-lastlabel').textContent = meta.lastLabel;
+    document.getElementById('f-ab-mentor-label').textContent = meta.lastLabel;
+    document.getElementById('ab-course-heading').textContent = meta.course;
+    syncActivityYear();
+  }
+  updateZoom();
+}
+
+document.getElementById('f-template').addEventListener('change', (e) => switchTemplate(e.target.value));
+// Initialize (assignment by default; ensures hidden activity controls start disabled)
+switchTemplate(document.getElementById('f-template').value || 'assignment');
+
+// ─── Activity Book Word (.doc/.docx) builder ──────────────────────────────────
+function buildActivityBookWordBody() {
+  const E = WordExport.esc;
+  const P = WordExport.p;
+  const meta = AB_TEMPLATES[currentTemplate] || AB_TEMPLATES.idtl;
+  const dbit = WordExport.getLogoDataURL('.ab-page img.ab-logo[alt="DBIT"]') || WordExport.getLogoDataURL('img.dbit-logo, img[alt="DBIT"]');
+  const way = WordExport.getLogoDataURL('.ab-page img.ab-logo[alt="Wayanamac"]');
+  const year = abYearInput.value.trim();
+  const yearLine = year ? P('Academic Year: ' + E(year), { size: 13, bold: true, mb: 8 }) : '';
+
+  // Header: 3-column table (logo | centered text | logo)
+  let header = '<table width="100%" cellspacing="0" cellpadding="0"><tr>' +
+    '<td width="92" style="vertical-align:middle;text-align:center;">' +
+      (dbit ? '<img src="' + dbit + '" style="height:62pt;" />' : '') +
+    '</td>' +
+    '<td style="vertical-align:middle;text-align:center;">' +
+      P('Wayanamac Education Trust \u00AE', { size: 10, bold: true, italic: true, mb: 1 }) +
+      P('DON BOSCO INSTITUTE OF TECHNOLOGY', { size: 16, bold: true, mb: 1 }) +
+      P('An Autonomous Institute, Affiliated to VTU, Belagavi', { size: 11, bold: true, mb: 1 }) +
+      P('Kumbalagodu, Mysore Road, Bengaluru \u2013 560 074', { size: 10.5, mb: 1 }) +
+      P('Ph: +91-80-28437028 / 29 / 30 www.dbit.co.in / www.dbit.edu.in', { size: 10.5 }) +
+    '</td>' +
+    '<td width="92" style="vertical-align:middle;text-align:center;">' +
+      (way ? '<img src="' + way + '" style="height:60pt;" />' : '') +
+    '</td>' +
+    '</tr></table>';
+
+  let titleBlock =
+    P(E(meta.course), { size: 24, bold: true, mt: 30, mb: 4 }) +
+    P(E(meta.code), { size: 21, bold: true, mb: 4 }) +
+    P('Activity Book', { size: 22, bold: true, mb: 6 });
+
+  // Field rows as a 3-column table (label | : | fill-in line)
+  const rows = [
+    ['Name of the Student', abEls.name.input.value],
+    ['USN', abEls.usn.input.value],
+    ['Branch', abEls.branch.input.value],
+    ['Section', abEls.section.input.value],
+    ['Semester', abEls.semester.input.value],
+    ['Team Name', abEls.teamName.input.value],
+    ['Team Strength', abEls.teamStrength.input.value],
+    [meta.lastLabel, abEls.mentor.input.value]
+  ];
+  let fields = '<table width="100%" cellspacing="0" cellpadding="0" style="margin-top:24pt;font-family:\'Times New Roman\',Times,serif;font-size:13pt;">';
+  rows.forEach(([label, val]) => {
+    fields += '<tr>' +
+      '<td width="38%" style="padding:8pt 0;">' + E(label) + '</td>' +
+      '<td width="3%" style="padding:8pt 0;">:</td>' +
+      '<td width="59%" style="padding:8pt 0;border-bottom:1pt solid #000;">' + E(val) + '&nbsp;</td>' +
+      '</tr>' +
+      '<tr><td colspan="3" style="font-size:4pt;">&nbsp;</td></tr>';
+  });
+  fields += '</table>';
+
+  const yearTop = (meta.yearPos === 'top') ? '<div style="text-align:center;">' + yearLine + '</div>' : '';
+  const yearMid = (meta.yearPos === 'mid') ? '<div style="text-align:left;">' + yearLine + '</div>' : '';
+
+  return header + yearTop + '<div style="text-align:center;">' + titleBlock + '</div>' + yearMid + fields;
+}
+
+// ─── Form Auto-Save (localStorage) ────────────────────────────────────────────
+(function setupFrontPageCache() {
+  const KEY = 'dbit_pagecraft_frontpage';
+  const form = document.getElementById('generator-form');
+
+  function collect() {
+    const s = {};
+    form.querySelectorAll('input[type="text"], select').forEach(el => {
+      if (el.id) s[el.id] = el.value;
+    });
+    return s;
+  }
+
+  function apply(s) {
+    if (!s) return;
+    // Apply template first so the right field group / preview page is active
+    if (s['f-template']) {
+      const t = document.getElementById('f-template');
+      t.value = s['f-template'];
+      switchTemplate(t.value);
+    }
+    Object.keys(s).forEach(id => {
+      if (id === 'f-template') return;
+      const el = document.getElementById(id);
+      if (el) el.value = s[id];
+    });
+    // Fire listeners so the preview + "Other" toggles update from restored values
+    form.querySelectorAll('select').forEach(el => el.dispatchEvent(new Event('input')));
+    form.querySelectorAll('input[type="text"]').forEach(el => el.dispatchEvent(new Event('input')));
+    if (typeof syncActivityYear === 'function') syncActivityYear();
+  }
+
+  apply(FormCache.load(KEY));
+
+  const save = FormCache.debounce(() => FormCache.save(KEY, collect()));
+  form.addEventListener('input', save);
+  form.addEventListener('change', save);
+})();
+
 // ── URL Parameters API ──
-// Usage: /?topic=...&subject=...&code=...&degree=...&branch=...&name=...&usn=...&semester=...&section=...&guide=...&guideTitle=...&guideDept=...&download=pdf|png
+// Usage: /?topic=...&subject=...&code=...&degree=...&branch=...&name=...&usn=...&semester=...&section=...&guide=...&guideTitle=...&guideDept=...&download=pdf|png|doc|docx
 (function loadFromURL() {
   const params = new URLSearchParams(window.location.search);
   if (!params.has('topic') && !params.has('download')) return;
@@ -429,4 +726,6 @@ mergeBtn.addEventListener('click', async () => {
   const dl = params.get('download');
   if (dl === 'pdf') setTimeout(() => document.getElementById('btn-download').click(), 1000);
   if (dl === 'png') setTimeout(() => document.getElementById('btn-export-png').click(), 1000);
+  if (dl === 'doc') setTimeout(() => document.getElementById('btn-export-doc').click(), 1000);
+  if (dl === 'docx') setTimeout(() => document.getElementById('btn-export-docx').click(), 1000);
 })();

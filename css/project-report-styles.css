@@ -49,7 +49,11 @@ body {
 .team-section { width: 100%; margin-top: 8px; }
 .team-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .team-names { display: flex; flex-wrap: wrap; gap: 5px; }
-.team-names span { font-size: 0.72rem; background: #e0e7ff; color: var(--primary-color); padding: 3px 8px; border-radius: 4px; font-weight: 500; }
+.team-names span, .team-names a { font-size: 0.72rem; background: #e0e7ff; color: var(--primary-color); padding: 3px 8px; border-radius: 4px; font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.1s; }
+.team-names a:hover { background: #c7d2fe; }
+.team-names a:active { transform: scale(0.96); }
+.acknowledgement a { color: inherit; text-decoration: none; }
+.acknowledgement a:hover strong { text-decoration: underline; }
 .acknowledgement { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; font-style: italic; }
 .acknowledgement strong { color: var(--text-main); font-weight: 600; }
 .creator-credit {
@@ -155,6 +159,21 @@ select {
 .btn-primary { background: var(--primary-color); color: #fff; }
 .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(79,70,229,0.25); }
 .btn-primary:active { transform: translateY(0) scale(0.98); }
+
+/* Word export buttons */
+.word-export-row { display: flex; gap: 10px; }
+.btn-word {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 12px; border-radius: 10px;
+  font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  border: none; background: #2b579a; color: #fff;
+  transition: all 0.2s ease;
+}
+.btn-word:hover { background: #1e3f70; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(43,87,154,0.25); }
+.btn-word:active { transform: translateY(0) scale(0.98); }
+.btn-word-alt { background: #41a5ee; }
+.btn-word-alt:hover { background: #2b8fd9; box-shadow: 0 4px 12px rgba(65,165,238,0.25); }
+.btn-word:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
 .merge-section {
   display: flex; flex-direction: column; gap: 8px;

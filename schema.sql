@@ -13,8 +13,12 @@ create table if not exists generations (
   topic text,
   semester text,
   section text,
-  branch text
+  branch text,
+  email text
 );
+
+-- Existing installs: add the email column if the table already exists.
+alter table generations add column if not exists email text;
 
 -- Enable Row Level Security
 alter table generations enable row level security;

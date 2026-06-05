@@ -5,27 +5,33 @@ const SUPABASE_URL = 'https://jkhxpdsyouecsjresikt.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0';
 
 async function logGeneration(type) {
+  const url = `${SUPABASE_URL}/rest/v1/generations`;
+  const headers = {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+  const students = getStudents();
+  const base = {
+    page: 'project-report',
+    type,
+    student_name: students[0]?.name || '',
+    usn: students[0]?.usn || '',
+    subject: document.getElementById('f-project-title')?.value || '',
+    semester: getVal('semester'),
+    branch: getVal('branch'),
+  };
+  const email = (window.EmailGate && EmailGate.get()) || '';
   try {
-    const students = getStudents();
-    await fetch(`${SUPABASE_URL}/rest/v1/generations`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        page: 'project-report',
-        type,
-        student_name: students[0]?.name || '',
-        usn: students[0]?.usn || '',
-        subject: document.getElementById('f-project-title')?.value || '',
-        semester: getVal('semester'),
-        branch: getVal('branch'),
-      })
-    });
+    let res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(Object.assign({ email }, base)) });
+    if (!res.ok) { await fetch(url, { method: 'POST', headers, body: JSON.stringify(base) }); }
   } catch (_) {}
+}
+
+// Ask for email on the first export, then remember it (see js/email-gate.js)
+if (window.EmailGate) {
+  EmailGate.gate('#btn-download, #btn-merge, #btn-export-docx, #btn-export-doc');
 }
 
 // ── "Other" fields ──
@@ -392,6 +398,269 @@ document.getElementById('btn-fill-demo').addEventListener('click', () => {
   updatePreview();
 });
 
+// ─── Word Export (.doc / .docx) ───────────────────────────────────────────────
+// Builds editable, Word-compatible HTML for the selected report pages (A4, Times
+// New Roman) and exports via the shared WordExport helper. Reuses the already
+// generated certificate/declaration/acknowledgement body HTML from the live DOM.
+function frameReportPage(innerHtml) {
+  // Blue frame approximating the on-screen page border (rounded corners and the
+  // corner squares can't render in Word, so a solid blue border is used).
+  return '<table width="100%" cellspacing="0" cellpadding="0" style="border:4pt solid #010080;">' +
+    '<tr><td style="padding:22pt 26pt;">' + innerHtml + '</td></tr></table>';
+}
+
+function reportValues() {
+  return {
+    projectTitle: document.getElementById('f-project-title').value.trim(),
+    phase: getVal('phase'),
+    degree: getVal('degree'),
+    branch: getVal('branch'),
+    semester: getVal('semester'),
+    academicYear: document.getElementById('f-academic-year').value.trim(),
+    department: document.getElementById('f-department').value.trim(),
+    departmentFull: document.getElementById('f-department-full').value.trim(),
+    guideName: document.getElementById('f-guide-name').value.trim(),
+    guideTitle: document.getElementById('f-guide-title').value.trim(),
+    hodName: document.getElementById('f-hod-name').value.trim(),
+    hodQualification: document.getElementById('f-hod-qualification').value.trim(),
+    hodTitle: document.getElementById('f-hod-title').value.trim(),
+    principalName: document.getElementById('f-principal-name').value.trim(),
+    principalQualification: document.getElementById('f-principal-qualification').value.trim(),
+    students: getStudents()
+  };
+}
+
+function reportBodyBlock(html) {
+  // Wrap a generated body (cert/decl/ack) with justified, double-spaced styling.
+  return '<div style="font-family:\'Times New Roman\',Times,serif;font-size:12pt;' +
+    'line-height:2;text-align:justify;">' + html + '</div>';
+}
+
+function reportPageNumber(numeral) {
+  return '<table align="center" cellspacing="0" cellpadding="0" style="margin-top:24pt;width:150pt;">' +
+    '<tr><td style="border-bottom:1pt solid #000;"></td></tr></table>' +
+    WordExport.p(numeral, { size: 11, mt: 3 });
+}
+
+// PAGE 1 — Title page
+function buildReportTitlePageWord(v) {
+  const E = WordExport.esc, P = WordExport.p;
+  const deptUpper = v.departmentFull.toUpperCase();
+  let s = '';
+  s += P('VISVESVARAYA TECHNOLOGICAL UNIVERSITY', { size: 18, bold: true, mb: 2 });
+  s += P('\u201CJnana Sangama\u201D, Belagavi-590018', { size: 12, mb: 6 });
+  s += WordExport.img(WordExport.getLogoDataURL('img.vtu-logo'), 80);
+  s += P('A Project Report (' + E(v.phase) + ')', { size: 14, mt: 6, mb: 2 });
+  s += P('on', { size: 14, bold: true, mb: 2 });
+  s += P('\u201C' + E(v.projectTitle) + '\u201D', { size: 14, bold: true, color: '#ff0000', mb: 8 });
+  s += P('Submitted in partial fulfilment of the requirements for the award of the Degree of', { size: 12, italic: true, mb: 3 });
+  s += P(E(v.degree), { size: 14, color: '#b90000', mb: 2 });
+  s += P('in', { size: 14, mb: 2 });
+  s += P(E(v.branch), { size: 14, mb: 2 });
+  s += P('by', { size: 14, mb: 4 });
+  // Students table
+  if (v.students.length) {
+    s += '<table align="center" cellspacing="0" cellpadding="0" style="width:62%;font-family:\'Times New Roman\',Times,serif;font-size:14pt;">' +
+      v.students.map(st =>
+        '<tr><td style="text-align:left;padding:1pt 6pt;">' + E(st.name.toUpperCase()) + '</td>' +
+        '<td style="text-align:right;padding:1pt 6pt;">' + E(st.usn) + '</td></tr>'
+      ).join('') + '</table>';
+  }
+  s += P('Under the Guidance of', { size: 14, italic: true, color: '#006cb9', mt: 14, mb: 4 });
+  s += P(E(v.guideName.toUpperCase()), { size: 14, bold: true, mb: 2 });
+  s += P(E(v.guideTitle), { size: 12, mb: 2 });
+  s += P('Department of ' + E(v.department), { size: 12, mb: 6 });
+  s += WordExport.img(WordExport.getLogoDataURL('#page-1 img.dbit-logo, img.dbit-logo'), 70);
+  s += P('DON BOSCO INSTITUTE OF TECHNOLOGY', { size: 14, bold: true, mt: 8, mb: 2 });
+  s += P('DEPARTMENT OF ' + E(deptUpper), { size: 14, bold: true, color: '#006cb9', mb: 2 });
+  s += P('Kumbalagodu,Mysuru Road, Bengaluru-560074', { size: 12, bold: true, mb: 2 });
+  s += P(E(v.academicYear), { size: 12, bold: true });
+  return frameReportPage(s);
+}
+
+// PAGE 2 — Certificate
+function buildReportCertPageWord(v) {
+  const E = WordExport.esc, P = WordExport.p;
+  const deptUpper = v.departmentFull.toUpperCase();
+  let s = '';
+  s += P('DON BOSCO INSTITUTE OF TECHNOLOGY', { size: 16, bold: true, mb: 2 });
+  s += P('Kumbalagodu, Mysore Road, Bangalore-560 074', { size: 12, bold: true, mb: 6 });
+  s += P('DEPARTMENT OF ' + E(deptUpper), { size: 14, bold: true, mb: 6 });
+  s += WordExport.img(WordExport.getLogoDataURL('img.dbit-logo'), 80);
+  s += P('CERTIFICATE', { size: 16, mt: 12, mb: 2, spacing: 1 });
+  s += '<table align="center" cellspacing="0" cellpadding="0" style="width:90pt;margin-bottom:14pt;">' +
+    '<tr><td style="border-bottom:2pt solid #000;"></td></tr></table>';
+  s += reportBodyBlock(document.getElementById('t-cert-body').innerHTML);
+  // Signatures (3 columns)
+  s += '<table width="100%" cellspacing="0" cellpadding="0" style="margin-top:30pt;font-family:\'Times New Roman\',Times,serif;"><tr>' +
+    '<td width="33%" style="text-align:center;vertical-align:top;">' +
+      P('Signature of Guide', { size: 12, bold: true, mb: 26 }) +
+      P('...................................', { size: 12, bold: true, mb: 4 }) +
+      P(E(v.guideName), { size: 10, bold: true, mb: 1 }) +
+      P(E(v.guideTitle), { size: 10, bold: true, mb: 1 }) +
+      P('Department of ' + E(v.department), { size: 10, bold: true }) +
+    '</td>' +
+    '<td width="34%" style="text-align:center;vertical-align:top;">' +
+      P('Signature of HOD', { size: 12, bold: true, mb: 26 }) +
+      P('..................................', { size: 12, bold: true, mb: 4 }) +
+      P(E(v.hodName), { size: 10, bold: true, mb: 1 }) +
+      P(E(v.hodQualification), { size: 9, italic: true, mb: 1 }) +
+      P(E(v.hodTitle), { size: 10, bold: true, mb: 1 }) +
+      P('Department of ' + E(v.department), { size: 10, bold: true }) +
+    '</td>' +
+    '<td width="33%" style="text-align:center;vertical-align:top;">' +
+      P('Signature of Principal', { size: 12, bold: true, mb: 26 }) +
+      P('................................', { size: 12, bold: true, mb: 4 }) +
+      P(E(v.principalName), { size: 10, bold: true, mb: 1 }) +
+      P(E(v.principalQualification), { size: 9, italic: true, mb: 1 }) +
+      P('Principal, DBIT', { size: 10, bold: true }) +
+    '</td>' +
+    '</tr></table>';
+  return frameReportPage(s);
+}
+
+// PAGE 3 — Declaration
+function buildReportDeclPageWord(v) {
+  const E = WordExport.esc, P = WordExport.p;
+  const deptUpper = v.departmentFull.toUpperCase();
+  let s = '';
+  s += P('DON BOSCO INSTITUTE OF TECHNOLOGY', { size: 16, bold: true, mb: 2 });
+  s += P('Kumbalagodu, Mysuru Road, Bengaluru-560074', { size: 12, mb: 6 });
+  s += P('DEPARTMENT OF ' + E(deptUpper), { size: 14, bold: true, mb: 6 });
+  s += WordExport.img(WordExport.getLogoDataURL('img.dbit-logo'), 80);
+  s += P('DECLARATION', { size: 16, bold: true, mt: 12, mb: 12 });
+  s += reportBodyBlock(document.getElementById('t-decl-body').innerHTML);
+  // Footer: Place left, student signatures right
+  let sigs = '';
+  if (v.students.length) {
+    sigs = '<table align="right" cellspacing="0" cellpadding="0" style="font-family:\'Times New Roman\',Times,serif;font-size:12pt;font-weight:bold;">' +
+      v.students.map(st =>
+        '<tr><td style="text-align:left;padding:1pt 8pt;">' + E(st.name) + '</td>' +
+        '<td style="text-align:left;padding:1pt 8pt;">(' + E(st.usn) + ')</td></tr>'
+      ).join('') + '</table>';
+  }
+  s += '<table width="100%" cellspacing="0" cellpadding="0" style="margin-top:30pt;"><tr>' +
+    '<td width="40%" style="vertical-align:bottom;">' +
+      P('Place: Bengaluru', { size: 12, bold: true, align: 'left' }) +
+    '</td>' +
+    '<td width="60%" style="vertical-align:bottom;text-align:right;">' + sigs + '</td>' +
+    '</tr></table>';
+  s += reportPageNumber('i');
+  return frameReportPage(s);
+}
+
+// PAGE 4 — Acknowledgement
+function buildReportAckPageWord(v) {
+  const P = WordExport.p;
+  let s = '';
+  s += P('ACKNOWLEDGEMENT', { size: 18, bold: true, mb: 14 });
+  s += reportBodyBlock(document.getElementById('t-ack-body').innerHTML);
+  s += reportPageNumber('ii');
+  return frameReportPage(s);
+}
+
+function buildReportWordBody() {
+  updatePreview(); // ensure cert/decl/ack bodies are current in the DOM
+  const v = reportValues();
+  const builders = [
+    buildReportTitlePageWord,
+    buildReportCertPageWord,
+    buildReportDeclPageWord,
+    buildReportAckPageWord
+  ];
+  const selected = getSelectedPages();
+  const pages = selected.map(idx => builders[idx](v));
+  return pages.join(WordExport.pageBreak);
+}
+
+function exportReportWord(kind) {
+  const selected = getSelectedPages();
+  if (!selected.length) { alert('Select at least one page to download.'); return; }
+  const body = buildReportWordBody();
+  const students = getStudents();
+  const base = `Project_Report_${(students[0]?.name || 'Report').replace(/\s+/g, '_')}`;
+  const title = document.getElementById('f-project-title').value || 'Project Report';
+  if (kind === 'docx') {
+    WordExport.downloadDocx(base, body, { title });
+    logGeneration('REPORT_DOCX');
+  } else {
+    WordExport.downloadDoc(base, body, { title });
+    logGeneration('REPORT_DOC');
+  }
+}
+
+document.getElementById('btn-export-docx').addEventListener('click', () => {
+  try { exportReportWord('docx'); }
+  catch (e) { console.error('DOCX export failed:', e); alert('Failed to export .docx. Please try again.'); }
+});
+document.getElementById('btn-export-doc').addEventListener('click', () => {
+  try { exportReportWord('doc'); }
+  catch (e) { console.error('DOC export failed:', e); alert('Failed to export .doc. Please try again.'); }
+});
+
+// ─── Form Auto-Save (localStorage) ────────────────────────────────────────────
+(function setupReportCache() {
+  const KEY = 'dbit_pagecraft_report';
+  const form = document.getElementById('generator-form');
+
+  function collect() {
+    const s = { fields: {}, students: getStudents(), pages: [] };
+    form.querySelectorAll('input[type="text"], select').forEach(el => {
+      if (el.id) s.fields[el.id] = el.value;
+    });
+    document.querySelectorAll('.page-cb').forEach(cb => s.pages.push({ v: cb.value, c: cb.checked }));
+    return s;
+  }
+
+  function attr(v) { return (v || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+
+  function rebuildStudents(list) {
+    if (!list || !list.length) return;
+    studentsContainer.innerHTML = '';
+    list.forEach(st => {
+      const div = document.createElement('div');
+      div.className = 'student-entry';
+      div.innerHTML = '<div class="form-row">' +
+        '<div class="form-group"><label>Name</label><input type="text" class="s-name" value="' + attr(st.name) + '" required></div>' +
+        '<div class="form-group"><label>USN</label><input type="text" class="s-usn" value="' + attr(st.usn) + '" required></div>' +
+        '<button type="button" class="btn-remove-student" title="Remove">&times;</button></div>';
+      studentsContainer.appendChild(div);
+      div.querySelectorAll('input').forEach(i => i.addEventListener('input', updatePreview));
+      div.querySelector('.btn-remove-student').addEventListener('click', () => { div.remove(); updatePreview(); });
+    });
+  }
+
+  function apply(s) {
+    if (!s) return;
+    if (s.fields) {
+      Object.keys(s.fields).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = s.fields[id];
+      });
+    }
+    rebuildStudents(s.students);
+    if (s.pages) {
+      s.pages.forEach(p => {
+        const cb = document.querySelector('.page-cb[value="' + p.v + '"]');
+        if (cb) cb.checked = p.c;
+      });
+    }
+    // Fire select listeners so "Other" inputs show/hide, then refresh preview
+    form.querySelectorAll('select').forEach(el => el.dispatchEvent(new Event('input')));
+    updatePreview();
+  }
+
+  apply(FormCache.load(KEY));
+
+  const save = FormCache.debounce(() => FormCache.save(KEY, collect()));
+  form.addEventListener('input', save);
+  form.addEventListener('change', save);
+  // Catch student add/remove (which don't fire form input/change)
+  if (window.MutationObserver) {
+    new MutationObserver(save).observe(studentsContainer, { childList: true });
+  }
+})();
+
 // ── URL Parameters API ──
 // Usage: /project-report?title=...&phase=...&degree=...&branch=...&semester=...&year=...&dept=...&deptFull=...&guide=...&guideTitle=...&hod=...&hodQual=...&hodTitle=...&principal=...&principalQual=...&coordinator=...&coordinatorTitle=...&students=Name1:USN1,Name2:USN2&download=true&pages=0,1,2,3
 (function loadFromURL() {
@@ -470,7 +739,12 @@ document.getElementById('btn-fill-demo').addEventListener('click', () => {
   updatePreview();
 
   // Auto-download
-  if (params.get('download') === 'true') {
+  const dl = params.get('download');
+  if (dl === 'true' || dl === 'pdf') {
     setTimeout(() => document.getElementById('btn-download').click(), 1000);
+  } else if (dl === 'doc') {
+    setTimeout(() => document.getElementById('btn-export-doc').click(), 1000);
+  } else if (dl === 'docx') {
+    setTimeout(() => document.getElementById('btn-export-docx').click(), 1000);
   }
 })();
