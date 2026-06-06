@@ -601,7 +601,7 @@ function buildActivityBookWordBody() {
       P('Wayanamac Education Trust \u00AE', { size: 10, bold: true, italic: true, mb: 1 }) +
       P('DON BOSCO INSTITUTE OF TECHNOLOGY', { size: 16, bold: true, mb: 1 }) +
       P('An Autonomous Institute, Affiliated to VTU, Belagavi', { size: 11, bold: true, mb: 1 }) +
-      P('Kumbalagodu, Mysore Road, Bengaluru \u2013 560 074', { size: 10.5, mb: 1 }) +
+      P('Kumbalagodu, Mysore Road, Bengaluru - 560 074', { size: 10.5, mb: 1 }) +
       P('Ph: +91-80-28437028 / 29 / 30 www.dbit.co.in / www.dbit.edu.in', { size: 10.5 }) +
     '</td>' +
     '<td width="92" style="vertical-align:middle;text-align:center;">' +
