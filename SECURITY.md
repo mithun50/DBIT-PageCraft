@@ -9,6 +9,10 @@ If you discover a security vulnerability, please report it responsibly:
 
 We will acknowledge your report within 48 hours and provide a fix as soon as possible.
 
+## Bug Bounty
+
+This project does **not** have a bug bounty program. We appreciate responsible disclosure but cannot offer monetary rewards.
+
 ## Scope
 
 - Supabase RLS policy bypasses
@@ -19,3 +23,4 @@ We will acknowledge your report within 48 hours and provide a fix as soon as pos
 
 - The Supabase anon key is intentionally public (it only allows inserts)
 - Client-side code is fully visible by design (static site)
+- Issues that require physical access to the user's device

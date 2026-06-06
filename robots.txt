@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dbitpagecraft.mithungowda.in/sitemap.xml

@@ -1,35 +1,35 @@
 # DBIT PageCraft
 
-A beautiful, responsive, fully client-side web app that generates pristine, academically-formatted A4 documents for Don Bosco Institute of Technology (DBIT), Visvesvaraya Technological University (VTU) — assignment front pages, major-project reports, and lab/project **Activity Book** covers — exportable as PDF, PNG, or **editable Word** files.
+A beautiful, responsive, fully client-side web app that generates pristine, academically-formatted A4 documents for Don Bosco Institute of Technology (DBIT), Visvesvaraya Technological University (VTU) - assignment front pages, major-project reports, and lab/project **Activity Book** covers - exportable as PDF, PNG, or **editable Word** files.
 
-No installs, no logins for end users, no backend rendering — everything runs in the browser.
+No installs, no logins for end users, no backend rendering - everything runs in the browser.
 
 ## Features
 
 - **Three templates in one place**
-  - **Assignment Front Page** — official DBIT/VTU layout with double border and Times New Roman typography
-  - **Project Report** — Title Page, Certificate, Declaration & Acknowledgement for major projects (4 pages, selectable)
-  - **Activity Book covers** — *Innovation and Design Thinking Lab (B25IDTL18)* and *Interdisciplinary Project Based Learning (B25PRJ28)*
-- **Live exact preview** — see the page render in real time as you type, with zoom controls
-- **Export options** — `.pdf`, high-resolution `.png`, and **editable `.doc` / `.docx`** (Microsoft Word)
-- **PDF merge** — attach your assignment/report PDF and download one combined file
-- **Auto-save** — your form data is remembered on the device (survives refresh / navigation)
-- **Email capture** — first export asks for an email (then remembered), logged for analytics
-- **Admin dashboard** — secured analytics with charts, a generation log, and a dedicated **Email List** with CSV export
-- **Smart field pickers** — dropdowns for degree/branch/semester with a manual "Other" fallback
-- **URL parameters API** — pre-fill fields and auto-download via query string
-- **Sleek, responsive UI** — glassmorphism-inspired sidebar, works on desktop and mobile
+  - **Assignment Front Page** - official DBIT/VTU layout with double border and Times New Roman typography
+  - **Project Report** - Title Page, Certificate, Declaration & Acknowledgement for major projects (4 pages, selectable)
+  - **Activity Book covers** - *Innovation and Design Thinking Lab (B25IDTL18)* and *Interdisciplinary Project Based Learning (B25PRJ28)*
+- **Live exact preview** - see the page render in real time as you type, with zoom controls
+- **Export options** - `.pdf`, high-resolution `.png`, and **editable `.doc` / `.docx`** (Microsoft Word)
+- **PDF merge** - attach your assignment/report PDF and download one combined file
+- **Auto-save** - your form data is remembered on the device (survives refresh / navigation)
+- **Email capture** - first export asks for an email (then remembered), logged for analytics
+- **Admin dashboard** - secured analytics with charts, a generation log, and a dedicated **Email List** with CSV export
+- **Smart field pickers** - dropdowns for degree/branch/semester with a manual "Other" fallback
+- **URL parameters API** - pre-fill fields and auto-download via query string
+- **Sleek, responsive UI** - glassmorphism-inspired sidebar, works on desktop and mobile
 
 ## Tech Stack
 
-- **HTML5 & CSS3** — application UI and the exact A4 layout templates
-- **Vanilla JavaScript** — real-time DOM data-binding, zero framework overhead
-- **[html2canvas](https://html2canvas.hertzen.com/)** — high-fidelity HTML→canvas snapshot (PDF/PNG)
-- **[jsPDF](https://github.com/parallax/jsPDF)** — assembles snapshots into A4 PDFs
-- **[pdf-lib](https://pdf-lib.js.org/)** — client-side PDF merging
-- **[html-docx-js](https://github.com/evidenceprime/html-docx-js)** + **[JSZip](https://stuk.github.io/jszip/)** — editable `.docx` generation (A4-patched)
-- **[Supabase](https://supabase.com/)** — analytics database + admin authentication (email/password)
-- **[Chart.js](https://www.chartjs.org/)** — admin dashboard charts
+- **HTML5 & CSS3** - application UI and the exact A4 layout templates
+- **Vanilla JavaScript** - real-time DOM data-binding, zero framework overhead
+- **[html2canvas](https://html2canvas.hertzen.com/)** - high-fidelity HTML-to-canvas snapshot (PDF/PNG)
+- **[jsPDF](https://github.com/parallax/jsPDF)** - assembles snapshots into A4 PDFs
+- **[pdf-lib](https://pdf-lib.js.org/)** - client-side PDF merging
+- **[html-docx-js](https://github.com/evidenceprime/html-docx-js)** + **[JSZip](https://stuk.github.io/jszip/)** - editable `.docx` generation (A4-patched)
+- **[Supabase](https://supabase.com/)** - analytics database + admin authentication (email/password)
+- **[Chart.js](https://www.chartjs.org/)** - admin dashboard charts
 
 ## Project Structure
 
@@ -60,15 +60,15 @@ Switch templates from the **Template** dropdown at the top of the front-page sid
 | Template | Fields |
 |----------|--------|
 | Assignment Front Page | topic, subject, code, degree, branch, student, USN, semester, section, guide |
-| Activity Book — IDTL | student, USN, branch, section, semester, academic year, team name/strength, mentor |
-| Activity Book — Project | same as IDTL, with *Name of the Guide* instead of *Mentor* |
+| Activity Book - IDTL | student, USN, branch, section, semester, academic year, team name/strength, mentor |
+| Activity Book - Project | same as IDTL, with *Name of the Guide* instead of *Mentor* |
 
 The Project Report (separate page) lets you choose which of the 4 pages to export via checkboxes.
 
 ### Export formats
-- **PDF / PNG** — rasterized snapshot of the live page (pixel-perfect to the preview).
-- **Word (`.docx`)** — real OOXML produced by html-docx-js and **re-packaged to A4**; fully **editable** in Microsoft Word. Logos are embedded.
-- **Word (`.doc`)** — packaged as MHTML so logos render and text stays **editable** in Word.
+- **PDF / PNG** - rasterized snapshot of the live page (pixel-perfect to the preview).
+- **Word (`.docx`)** - real OOXML produced by html-docx-js and **re-packaged to A4**; fully **editable** in Microsoft Word. Logos are embedded.
+- **Word (`.doc`)** - packaged as MHTML so logos render and text stays **editable** in Word.
 
 > Note: the Word files are genuinely editable (not an image). Decorative borders are simplified versions of the on-screen design, since Word can't reproduce rounded/corner-square borders. `.docx` is built for Microsoft Word; very old LibreOffice/Google Docs versions may render the embedded content imperfectly.
 
@@ -94,7 +94,7 @@ On any export, if no email is cached the app asks for one (and remembers it). Th
   ```
   or with the built-in helpers: `FormCache.clear('dbit_pagecraft_frontpage')`, `EmailGate.clear()`.
 - **Everything for the site:** `localStorage.clear()` in the console.
-- **DevTools:** Application → Storage → Local Storage → delete the keys.
+- **DevTools:** Application > Storage > Local Storage > delete the keys.
 - **Browser settings:** clear "Cookies and site data" for the domain.
 
 ## URL Parameters API
@@ -134,7 +134,7 @@ The app uses Supabase for analytics logging and a secured admin dashboard.
      ```sql
      alter table generations add column if not exists email text;
      ```
-3. In **Authentication → Users**, create an admin user (email + password).
+3. In **Authentication > Users**, create an admin user (email + password).
 4. Update `SUPABASE_URL` and `SUPABASE_ANON_KEY` in:
    - `js/script.js`
    - `js/project-report-script.js`
@@ -144,18 +144,18 @@ The app uses Supabase for analytics logging and a secured admin dashboard.
 
 | Action | Auth | Policy |
 |--------|------|--------|
-| Logging a generation (insert) | `anon` key | Public — anyone can insert |
+| Logging a generation (insert) | `anon` key | Public - anyone can insert |
 | Reading analytics (select) | Authenticated user | Email/password sign-in required |
 
-The admin panel at `/admin` uses Supabase Auth — no hardcoded passwords. The logger inserts the email with each record and **safely retries without it** if the `email` column is missing, so analytics never break.
+The admin panel at `/admin` uses Supabase Auth - no hardcoded passwords. The logger inserts the email with each record and **safely retries without it** if the `email` column is missing, so analytics never break.
 
 ## Admin Dashboard
 
 At `/admin` (sign in with the Supabase user you created):
-- **Stats** — totals by type (PDF, PNG, Report, Merge, Word docs), unique students, unique emails
-- **Charts** — daily usage (last 14 days) and breakdown by type
-- **Generation Log** — searchable, most-recent-first
-- **Email List** — deduplicated emails with name, export count, and last activity, plus **Export CSV** and **Copy emails**
+- **Stats** - totals by type (PDF, PNG, Report, Merge, Word docs), unique students, unique emails
+- **Charts** - daily usage (last 14 days) and breakdown by type
+- **Generation Log** - searchable, most-recent-first
+- **Email List** - deduplicated emails with name, export count, and last activity, plus **Export CSV** and **Copy emails**
 
 ## Deployment
 
@@ -163,11 +163,11 @@ Configured for zero-config deployment on **Vercel**. The included `vercel.json` 
 
 ## Team
 
-- **[Mithun Gowda B](https://www.linkedin.com/in/mithungowdab/)** — Creator & Developer — [mithungowda.b7411@gmail.com](mailto:mithungowda.b7411@gmail.com)
+- **[Mithun Gowda B](https://www.linkedin.com/in/mithungowdab/)** - Creator & Developer - [mithungowda.b7411@gmail.com](mailto:mithungowda.b7411@gmail.com)
 - **[Naren V](https://www.linkedin.com/in/naren-v-29b39939a/)**
 - **[Harsha N](https://www.linkedin.com/in/harsha1218/)**
 - **[Nevil Anson DSouza](https://www.linkedin.com/in/nevil-anson-dsouza/)**
-- **[Manas Kiran Habbu](https://www.linkedin.com/in/manas-kiran-habbu-058487306/)** — Marketing
+- **[Manas Kiran Habbu](https://www.linkedin.com/in/manas-kiran-habbu-058487306/)** - Marketing
 - **[Lekhan H R](https://www.linkedin.com/in/lekhan-hr-507b89371/)**
 
 *Don Bosco Institute of Technology, Bengaluru*

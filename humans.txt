@@ -1,0 +1,19 @@
+/* TEAM */
+Creator: Mithun Gowda B
+Contact: mithungowda.b7411@gmail.com
+LinkedIn: https://www.linkedin.com/in/mithungowdab/
+
+Developer: Naren V
+Developer: Harsha N
+Developer: Nevil Anson DSouza
+Marketing: Manas Kiran Habbu
+Developer: Lekhan H R
+
+/* THANKS */
+Mahesh Kumar G
+
+/* SITE */
+Last update: 2026-06-06
+Language: English
+Standards: HTML5, CSS3, JavaScript
+Software: html2canvas, jsPDF, pdf-lib, html-docx-js, Supabase, Chart.js
