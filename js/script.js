@@ -13,13 +13,13 @@ async function logGeneration(type) {
   const base = {
     page: 'front-page',
     type,
-    student_name: formEls.studentName?.value || '',
-    usn: formEls.usn?.value || '',
+    student_name: currentTemplate === 'assignment' ? (formEls.studentName?.value || '') : (abEls.name?.input?.value || ''),
+    usn: currentTemplate === 'assignment' ? (formEls.usn?.value || '') : (abEls.usn?.input?.value || ''),
     subject: formEls.subjectName?.value || '',
     subject_code: formEls.subjectCode?.value || '',
     topic: formEls.reportTopic?.value || '',
-    semester: formEls.semester?.value || '',
-    section: formEls.section?.value || '',
+    semester: currentTemplate === 'assignment' ? (formEls.semester?.value || '') : (abEls.semester?.input?.value || ''),
+    section: currentTemplate === 'assignment' ? (formEls.section?.value || '') : (abEls.section?.input?.value || ''),
   };
   const email = (window.EmailGate && EmailGate.get()) || '';
   try {
