@@ -167,6 +167,14 @@ Object.keys(formEls).forEach(key => {
   });
 });
 
+// Bold toggle for the "Submitted By" / "Guided By" blocks
+const boldFooterCheckbox = document.getElementById('f-bold-footer');
+const footerColumnsEl = document.getElementById('t-footer-columns');
+function syncBoldFooter() {
+  if (footerColumnsEl) footerColumnsEl.classList.toggle('bold-text', boldFooterCheckbox.checked);
+}
+boldFooterCheckbox.addEventListener('change', syncBoldFooter);
+
 // Zoom Controls
 let zoomLevel = window.innerWidth <= 768 ? 0.4 : 0.8;
 const templateRoot = document.getElementById('template-root');
@@ -422,6 +430,7 @@ function buildFrontPageWordBody() {
 
   const vtu  = WordExport.getLogoDataURL('img.vtu-logo');
   const dbit = WordExport.getLogoDataURL('img.dbit-logo');
+  const fb   = boldFooterCheckbox.checked; // bold the Submitted By / Guided By blocks?
 
   let inner = '';
   // Header
@@ -443,16 +452,16 @@ function buildFrontPageWordBody() {
   // Footer: two columns (student details | guide details)
   inner += '<table width="100%" cellspacing="0" cellpadding="0" style="margin-top:16pt;"><tr>' +
     '<td width="55%" style="vertical-align:top;">' +
-      P('Submitted By', { size: 13.5, align: 'left', mb: 6 }) +
-      P('Name: ' + E(studentName), { size: 13.5, align: 'left', mb: 6 }) +
-      P('USN: ' + E(usn), { size: 13.5, align: 'left', mb: 6 }) +
-      P('Sem: ' + E(semester) + (section ? ' ' + E(section) : ''), { size: 13.5, align: 'left', mb: 6 }) +
+      P('Submitted By', { size: 13.5, align: 'left', mb: 6, bold: fb }) +
+      P('Name: ' + E(studentName), { size: 13.5, align: 'left', mb: 6, bold: fb }) +
+      P('USN: ' + E(usn), { size: 13.5, align: 'left', mb: 6, bold: fb }) +
+      P('Sem: ' + E(semester) + (section ? ' ' + E(section) : ''), { size: 13.5, align: 'left', mb: 6, bold: fb }) +
     '</td>' +
     '<td width="45%" style="vertical-align:top;">' +
-      P('Guided By:', { size: 13.5, align: 'left', mb: 6 }) +
-      P(E(guideName), { size: 13.5, align: 'left', mb: 6 }) +
-      P(E(guideTitle), { size: 13.5, align: 'left', mb: 6 }) +
-      P(E(guideDept), { size: 13.5, align: 'left', mb: 6 }) +
+      P('Guided By', { size: 13.5, align: 'left', mb: 6, bold: fb }) +
+      P(E(guideName), { size: 13.5, align: 'left', mb: 6, bold: fb }) +
+      P(E(guideTitle), { size: 13.5, align: 'left', mb: 6, bold: fb }) +
+      P(E(guideDept), { size: 13.5, align: 'left', mb: 6, bold: fb }) +
     '</td>' +
     '</tr></table>';
 
@@ -652,6 +661,9 @@ function buildActivityBookWordBody() {
     form.querySelectorAll('input[type="text"], select').forEach(el => {
       if (el.id) s[el.id] = el.value;
     });
+    form.querySelectorAll('input[type="checkbox"]').forEach(el => {
+      if (el.id) s[el.id] = el.checked;
+    });
     return s;
   }
 
@@ -666,12 +678,15 @@ function buildActivityBookWordBody() {
     Object.keys(s).forEach(id => {
       if (id === 'f-template') return;
       const el = document.getElementById(id);
-      if (el) el.value = s[id];
+      if (!el) return;
+      if (el.type === 'checkbox') el.checked = !!s[id];
+      else el.value = s[id];
     });
     // Fire listeners so the preview + "Other" toggles update from restored values
     form.querySelectorAll('select').forEach(el => el.dispatchEvent(new Event('input')));
     form.querySelectorAll('input[type="text"]').forEach(el => el.dispatchEvent(new Event('input')));
     if (typeof syncActivityYear === 'function') syncActivityYear();
+    if (typeof syncBoldFooter === 'function') syncBoldFooter();
   }
 
   apply(FormCache.load(KEY));

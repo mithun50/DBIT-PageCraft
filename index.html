@@ -171,6 +171,13 @@
           <label for="f-guide-dept">Department</label>
           <input type="text" id="f-guide-dept" placeholder="e.g. Department of Chemistry" required>
         </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label" for="f-bold-footer">
+            <input type="checkbox" id="f-bold-footer">
+            <span>Bold the "Submitted By" &amp; "Guided By" details</span>
+          </label>
+        </div>
         </div><!-- /#assignment-fields -->
 
         <div id="activity-fields" class="tpl-group" style="display:none">
@@ -303,7 +310,7 @@
                   <img src="assets/dblogo.png" class="dbit-logo" alt="DBIT Logo" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNDAiIGhlaWdodD0iMTQwIj48Y2lyY2xlIGN4PSI3MCIgY3k9IjcwIiByPSI2NCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTVlN2ViIiBzdHJva2Utd2lkdGg9IjIiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzljYTNhZiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTRweCI+REJJVCBMb2dvPC90ZXh0Pjwvc3ZnPg=='">
                 </div>
 
-                <div class="footer-columns">
+                <div class="footer-columns" id="t-footer-columns">
                   <!-- Student Details -->
                   <div class="student-column">
                     <div class="submitted-by-header">Submitted By</div>
@@ -321,7 +328,7 @@
                   <!-- Guide Details -->
                   <div class="guide-column">
                     <div class="info-row">
-                      <span class="info-label">Guided By:</span><br><span class="info-value" id="t-guide-name"></span>
+                      <span class="info-label">Guided By</span><br><span class="info-value" id="t-guide-name"></span>
                     </div>
                     <div class="info-row">
                       <span class="info-value" id="t-guide-title"></span>
