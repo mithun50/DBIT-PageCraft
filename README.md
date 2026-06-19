@@ -115,7 +115,7 @@ Pre-fill and optionally auto-download via the query string.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/mithun50/DBIT-PageCraft.git
+   git clone https://github.com/DBIT-Banglore/DBIT-PageCraft.git
    cd DBIT-PageCraft
    ```
 2. Start a local server (needed so logos load over HTTP for canvas/Word export):

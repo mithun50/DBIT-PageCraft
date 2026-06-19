@@ -10,16 +10,22 @@ async function logGeneration(type) {
     'Content-Type': 'application/json',
     'Prefer': 'return=minimal'
   };
+  // Build the record from whichever template is active. For Activity Book
+  // (IDTL / Project) we map the course + code into the subject columns so the
+  // analytics log captures meaningful, identifiable data for every template.
+  const isAssignment = currentTemplate === 'assignment';
+  const abMeta = (typeof AB_TEMPLATES !== 'undefined') ? AB_TEMPLATES[currentTemplate] : null;
   const base = {
     page: 'front-page',
     type,
-    student_name: currentTemplate === 'assignment' ? (formEls.studentName?.value || '') : (abEls.name?.input?.value || ''),
-    usn: currentTemplate === 'assignment' ? (formEls.usn?.value || '') : (abEls.usn?.input?.value || ''),
-    subject: formEls.subjectName?.value || '',
-    subject_code: formEls.subjectCode?.value || '',
-    topic: formEls.reportTopic?.value || '',
-    semester: currentTemplate === 'assignment' ? (formEls.semester?.value || '') : (abEls.semester?.input?.value || ''),
-    section: currentTemplate === 'assignment' ? (formEls.section?.value || '') : (abEls.section?.input?.value || ''),
+    student_name: isAssignment ? (formEls.studentName?.value || '') : (abEls.name?.input?.value || ''),
+    usn:          isAssignment ? (formEls.usn?.value || '')         : (abEls.usn?.input?.value || ''),
+    subject:      isAssignment ? (formEls.subjectName?.value || '') : (abMeta ? abMeta.course : 'Activity Book'),
+    subject_code: isAssignment ? (formEls.subjectCode?.value || '') : (abMeta ? abMeta.code.replace(/[()]/g, '') : ''),
+    topic:        isAssignment ? (formEls.reportTopic?.value || '')  : (abMeta ? (abMeta.course + ' - Activity Book') : 'Activity Book'),
+    semester:     isAssignment ? (formEls.semester?.value || '')    : (abEls.semester?.input?.value || ''),
+    section:      isAssignment ? (formEls.section?.value || '')     : (abEls.section?.input?.value || ''),
+    branch:       isAssignment ? (getFieldValue('branch') || '')    : (abEls.branch?.input?.value || ''),
   };
   const email = (window.EmailGate && EmailGate.get()) || '';
   try {
@@ -694,6 +700,42 @@ function buildActivityBookWordBody() {
   const save = FormCache.debounce(() => FormCache.save(KEY, collect()));
   form.addEventListener('input', save);
   form.addEventListener('change', save);
+})();
+
+// ─── Template Chooser Intro ───────────────────────────────────────────────────
+// Shows a clear "pick a template first" overlay so users immediately understand
+// they can choose Assignment / Activity Book. Skipped when the page is opened
+// via the URL-parameter API (pre-fill / auto-download).
+(function setupTemplateIntro() {
+  const intro = document.getElementById('template-intro');
+  if (!intro) return;
+  const select = document.getElementById('f-template');
+
+  function choose(tpl) {
+    if (tpl && select) {
+      select.value = tpl;
+      switchTemplate(tpl);
+      // Fire change so the form-cache persists the selection
+      select.dispatchEvent(new Event('change'));
+    }
+    intro.classList.remove('show');
+  }
+
+  intro.querySelectorAll('.tpl-option').forEach(btn => {
+    const tpl = btn.getAttribute('data-tpl');
+    const href = btn.getAttribute('data-href');
+    if (tpl && tpl === currentTemplate) btn.classList.add('selected');
+    btn.addEventListener('click', () => {
+      if (href) { window.location.href = href; return; } // e.g. Project Report page
+      choose(tpl);
+    });
+  });
+
+  // Don't interrupt the URL-parameter pre-fill / auto-download flow.
+  const params = new URLSearchParams(window.location.search);
+  if (!params.has('topic') && !params.has('download')) {
+    intro.classList.add('show');
+  }
 })();
 
 // ── URL Parameters API ──
