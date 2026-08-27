@@ -2,6 +2,10 @@
   "buildCommand": "node scripts/build.js",
   "cleanUrls": true,
   "trailingSlash": false,
+  "rewrites": [
+    { "source": "/admin",          "destination": "/admin.html" },
+    { "source": "/project-report", "destination": "/project-report.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
