@@ -51,7 +51,7 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 }
 
 // ── 3. Build the inline <script> block ───────────────────────────────────────
-const PLACEHOLDER = '<!-- @inject-config -->';
+const INJECT_REGEX = /<script>\s*\/\* Auto-injected by scripts\/build\.js[\s\S]*?<\/script>|<!-- @inject-config -->/;
 
 const inlineScript = `<script>
     /* Auto-injected by scripts/build.js from environment variables.
@@ -66,9 +66,9 @@ const inlineScript = `<script>
 // ── 4. Inject into HTML files ─────────────────────────────────────────────────
 const HTML_FILES = [
   'index.html',
-  'pages/project-report.html',
-  'pages/admin.html',
-  'pages/404.html',
+  'project-report.html',
+  'admin.html',
+  '404.html',
 ];
 
 let updated = 0;
@@ -81,12 +81,12 @@ for (const relPath of HTML_FILES) {
 
   let content = fs.readFileSync(absPath, 'utf8');
 
-  if (!content.includes(PLACEHOLDER)) {
+  if (!INJECT_REGEX.test(content)) {
     console.log(`[build] ${relPath} - no placeholder found, skipping`);
     continue;
   }
 
-  content = content.replace(PLACEHOLDER, inlineScript);
+  content = content.replace(INJECT_REGEX, inlineScript);
   fs.writeFileSync(absPath, content, 'utf8');
   console.log(`[build] ${relPath} - config injected`);
   updated++;

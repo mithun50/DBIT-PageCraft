@@ -1,15 +1,7 @@
 {
   "buildCommand": "node scripts/build.js",
-  "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
-    { "source": "/project-report", "destination": "/pages/project-report.html" },
-    { "source": "/admin",          "destination": "/pages/admin.html" }
-  ],
-  "redirects": [
-    { "source": "/js/config.js",  "destination": "/404",  "permanent": false }
-  ],
   "headers": [
     {
       "source": "/(.*)",

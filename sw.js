@@ -5,18 +5,18 @@
 //   - Supabase API -> Network only (analytics must reach the server)
 //   - Google Fonts -> Cache first
 
-const CACHE_NAME = 'dbit-pagecraft-v2';
-const OFFLINE_PAGE = '/pages/404.html';
+const CACHE_NAME = 'dbit-pagecraft-v3';
+const OFFLINE_PAGE = '/404.html';
 
 // Resources to pre-cache on install (app shell)
 const PRECACHE_URLS = [
   '/',
   '/index.html',
   '/project-report',
-  '/pages/project-report.html',
+  '/project-report.html',
   '/admin',
-  '/pages/admin.html',
-  '/pages/404.html',
+  '/admin.html',
+  '/404.html',
   '/css/styles.css?v=17',
   '/css/project-report-styles.css',
   '/js/script.js?v=17',

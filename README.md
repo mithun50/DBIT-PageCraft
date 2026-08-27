@@ -1,8 +1,24 @@
 # DBIT PageCraft
 
+<div align="center">
+
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-dbitpagecraft.mithungowda.in-4f46e5?style=for-the-badge&logo=vercel&logoColor=white)](https://dbitpagecraft.mithungowda.in)
+
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
+[![Supabase](https://img.shields.io/badge/Backend-Supabase-3ecf8e?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
+[![PWA](https://img.shields.io/badge/PWA-Enabled-5a0fc8?style=flat-square&logo=pwa&logoColor=white)](https://dbitpagecraft.mithungowda.in)
+[![Wake Up Supabase](https://github.com/DBIT-Banglore/DBIT-PageCraft/actions/workflows/wake-up-supabase.yml/badge.svg)](https://github.com/DBIT-Banglore/DBIT-PageCraft/actions/workflows/wake-up-supabase.yml)
+[![License](https://img.shields.io/badge/License-Proprietary-red?style=flat-square)](./LICENSE)
+[![Vanilla JS](https://img.shields.io/badge/Built%20with-Vanilla%20JS-f7df1e?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+[![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+
+</div>
+
 A beautiful, responsive, fully client-side web app that generates pristine, academically-formatted A4 documents for Don Bosco Institute of Technology (DBIT), Visvesvaraya Technological University (VTU) - assignment front pages, major-project reports, and lab/project **Activity Book** covers - exportable as PDF, PNG, or **editable Word** files.
 
 No installs, no logins for end users, no backend rendering - everything runs in the browser. Installable as a **PWA** (works offline after first visit).
+
 
 ## Features
 
@@ -37,34 +53,34 @@ No installs, no logins for end users, no backend rendering - everything runs in 
 ```
 DBIT-PageCraft/
 │
-├── index.html                    # Assignment Front Page + Activity Book generator (root entry point)
-├── sw.js                         # Service Worker (must be at root for full scope)
-├── manifest.json                 # PWA Web App Manifest
-├── vercel.json                   # Vercel: clean URLs, rewrites, security headers
-├── robots.txt                    # Crawler rules
+├── index.html                    # Assignment Front Page + Activity Book generator
+├── project-report.html           # 4-page Project Report generator (/project-report)
+├── admin.html                    # Secured analytics dashboard (/admin)
+├── 404.html                      # Custom 404 / offline fallback
+├── sw.js                         # Service Worker (PWA offline caching)
+├── manifest.json                 # PWA Web App Manifest & icons metadata
+├── package.json                  # npm scripts (dev, build, start)
+├── vercel.json                   # Vercel deployment config (cleanUrls, buildCommand)
+├── robots.txt                    # Search crawler rules
 ├── sitemap.xml                   # SEO sitemap
-├── google*.html                  # Google Search Console verification
-├── LICENSE
-├── README.md
+├── LICENSE                       # License terms
+├── README.md                     # Project documentation
 │
-├── pages/                        # Secondary HTML pages (routed via vercel.json rewrites)
-│   ├── project-report.html       # 4-page Project Report generator  -> /project-report
-│   ├── admin.html                # Secured analytics dashboard       -> /admin
-│   └── 404.html                  # Custom 404 / offline fallback
+├── scripts/
+│   └── build.js                  # Injects Supabase env vars into HTML at build time
 │
 ├── css/
-│   ├── styles.css                # Front-page UI + A4 templates (assignment + activity book)
+│   ├── styles.css                # Front-page UI + A4 layout styles
 │   └── project-report-styles.css # Report UI + 4-page A4 templates
 │
 ├── js/
-│   ├── config.js                 # [GITIGNORED] Supabase credentials - copy from config.example.js
-│   ├── config.example.js         # Credentials template (commit this, not config.js)
-│   ├── script.js                 # Front-page logic (binding, capture, exports, templates, cache)
+│   ├── script.js                 # Front-page logic (binding, capture, exports, templates)
 │   ├── project-report-script.js  # Report logic (students, pages, exports, cache)
-│   ├── word-export.js            # Shared .doc/.docx builder (MHTML + html-docx-js, A4)
+│   ├── word-export.js            # Shared .doc/.docx builder (A4 OOXML / MHTML)
 │   ├── form-cache.js             # localStorage auto-save helper
-│   ├── email-gate.js             # Email prompt + cache + export click gate
-│   └── pwa.js                    # Service Worker registration + install prompt + update toast
+│   ├── email-gate.js             # Email prompt + cache + export gate
+│   ├── pwa.js                    # Service Worker registration & install prompt
+│   └── config.js                 # Stub (real config injected at build time)
 │
 ├── assets/
 │   ├── dblogo.png                # DBIT logo
@@ -72,14 +88,10 @@ DBIT-PageCraft/
 │   ├── wayanamac.jpg             # Wayanamac Trust logo
 │   ├── icon-192.png              # PWA icon 192x192
 │   ├── icon-512.png              # PWA icon 512x512
-│   └── icon-maskable.png         # PWA maskable icon (Android)
+│   └── icon-maskable.png         # PWA maskable icon for Android
 │
-└── docs/
-    ├── schema.sql                # Supabase table + RLS policies (run in SQL Editor)
-    ├── humans.txt                # Credits
-    ├── CONTRIBUTING.md
-    ├── CODE_OF_CONDUCT.md
-    └── SECURITY.md
+└── supabase/
+    └── schema.sql                # Supabase table + RLS policies (run in SQL Editor)
 ```
 
 ## Templates & Export Formats
@@ -148,36 +160,35 @@ Pre-fill and optionally auto-download via the query string.
    git clone https://github.com/DBIT-Banglore/DBIT-PageCraft.git
    cd DBIT-PageCraft
    ```
-2. Set up your Supabase credentials:
+2. Set up credentials:
    ```bash
-   cp js/config.example.js js/config.js
-   # Edit js/config.js and fill in your SUPABASE_URL and SUPABASE_ANON_KEY
+   cp .env.example .env
+   # Open .env and fill in your SUPABASE_URL and SUPABASE_ANON_KEY
    ```
-3. Start a local server (needed so logos and the Service Worker load correctly):
+3. Build config and start the dev server:
    ```bash
-   npx serve
+   npm run dev
+   # Opens at http://localhost:3000
+   # /admin and /project-report route correctly via serve.json
    ```
-4. Open the provided localhost URL in your browser.
 
-> **Note:** `js/config.js` is git-ignored. Never commit real credentials.
+> Without step 2, analytics are silently disabled - everything else works fine.
 
 ## Supabase Setup
 
 The app uses Supabase for analytics logging and a secured admin dashboard.
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. Run `docs/schema.sql` in your project's **SQL Editor** to create the `generations` table with RLS policies.
+2. Run `supabase/schema.sql` in your project's **SQL Editor** to create the `generations` table with RLS policies.
    - Already have the table from an older version? Just run:
      ```sql
      alter table generations add column if not exists email text;
      ```
 3. In **Authentication > Users**, create an admin user (email + password).
-4. Copy `js/config.example.js` to `js/config.js` and fill in:
-   ```js
-   window.AppConfig = {
-     SUPABASE_URL:      'https://YOUR_PROJECT_REF.supabase.co',
-     SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY'
-   };
+4. In `.env` (local) or Vercel Environment Variables (production), set:
+   ```env
+   SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+   SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
    ```
 
 ### How it works
@@ -187,7 +198,7 @@ The app uses Supabase for analytics logging and a secured admin dashboard.
 | Logging a generation (insert) | `anon` key | Public - anyone can insert |
 | Reading analytics (select) | Authenticated user | Email/password sign-in required |
 
-The admin panel at `/admin` uses Supabase Auth - no hardcoded passwords. The logger inserts the email with each record and **safely retries without it** if the `email` column is missing, so analytics never break.
+The admin panel at `/admin` uses Supabase Auth - no hardcoded passwords. The logger inserts the email with each record and safely retries without it if the `email` column is missing, so analytics never break.
 
 ## PWA (Progressive Web App)
 
@@ -214,8 +225,8 @@ At `/admin` (sign in with the Supabase user you created):
 ## Deployment
 
 Configured for zero-config deployment on **Vercel**. `vercel.json` handles:
-- Clean URLs (no `.html` extension in the address bar)
-- Rewrites: `/project-report` -> `pages/project-report.html`, `/admin` -> `pages/admin.html`
+- Clean URLs: `/project-report` maps to `project-report.html`, `/admin` maps to `admin.html`
+- Build command: runs `node scripts/build.js` to inject environment variables into HTML pages
 - Security headers on all routes
 
 ## Team
