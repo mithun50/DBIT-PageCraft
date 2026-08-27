@@ -1,13 +1,42 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DBIT PageCraft - Assignment Front Page Generator</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Theme and status bar -->
+  <meta name="theme-color" content="#1e3a5f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="PageCraft">
+
+  <!-- Favicon + Apple touch icon -->
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon-192.png">
+  <link rel="apple-touch-icon" href="/assets/icon-512.png">
+
+  <!-- SEO / meta -->
+  <meta name="description" content="Generate perfectly formatted academic documents for DBIT, VTU - assignment front pages, project reports, and activity book covers. Export as PDF, PNG, or editable Word.">
+  <meta name="author" content="Mithun Gowda B">
+  <meta name="keywords" content="DBIT, VTU, assignment front page, project report, activity book, PageCraft, academic documents">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="DBIT PageCraft">
+  <meta property="og:description" content="Generate perfectly formatted DBIT/VTU academic documents in seconds. Export as PDF, PNG or Word.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="/assets/icon-512.png">
+
+  <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css?v=17">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Load html2canvas and jsPDF for generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -430,9 +459,21 @@
     </div>
   </div>
 
+  <script>
+    /* Auto-injected by scripts/build.js from environment variables.
+       Do NOT add real credentials here - use .env (local) or
+       Vercel Environment Variables (production) instead. */
+    window.AppConfig = {
+      SUPABASE_URL:      'https://jkhxpdsyouecsjresikt.supabase.co',
+      SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0'
+    };
+  </script>
   <script src="js/word-export.js?v=2"></script>
   <script src="js/form-cache.js?v=1"></script>
   <script src="js/email-gate.js?v=1"></script>
   <script src="js/script.js?v=17"></script>
+
+  <!-- PWA: Service Worker + Install Prompt -->
+  <script src="js/pwa.js?v=1"></script>
 </body>
 </html>

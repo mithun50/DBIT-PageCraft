@@ -2,7 +2,7 @@
 
 A beautiful, responsive, fully client-side web app that generates pristine, academically-formatted A4 documents for Don Bosco Institute of Technology (DBIT), Visvesvaraya Technological University (VTU) - assignment front pages, major-project reports, and lab/project **Activity Book** covers - exportable as PDF, PNG, or **editable Word** files.
 
-No installs, no logins for end users, no backend rendering - everything runs in the browser.
+No installs, no logins for end users, no backend rendering - everything runs in the browser. Installable as a **PWA** (works offline after first visit).
 
 ## Features
 
@@ -18,6 +18,7 @@ No installs, no logins for end users, no backend rendering - everything runs in 
 - **Admin dashboard** - secured analytics with charts, a generation log, and a dedicated **Email List** with CSV export
 - **Smart field pickers** - dropdowns for degree/branch/semester with a manual "Other" fallback
 - **URL parameters API** - pre-fill fields and auto-download via query string
+- **PWA** - installable, works offline, app icon on home screen
 - **Sleek, responsive UI** - glassmorphism-inspired sidebar, works on desktop and mobile
 
 ## Tech Stack
@@ -34,22 +35,51 @@ No installs, no logins for end users, no backend rendering - everything runs in 
 ## Project Structure
 
 ```
-index.html                  Assignment Front Page + Activity Book generator
-project-report.html         4-page Project Report generator
-admin.html                  Secured analytics dashboard (self-contained)
-schema.sql                  Supabase table + RLS policies
-vercel.json                 Clean-URL config for Vercel
-css/
-  styles.css                Front-page UI + A4 templates (assignment + activity book)
-  project-report-styles.css Report UI + 4-page A4 templates
-js/
-  script.js                 Front-page logic (binding, capture, exports, templates, cache)
-  project-report-script.js  Report logic (students, pages, exports, cache)
-  word-export.js            Shared .doc/.docx builder (MHTML + html-docx-js, A4)
-  form-cache.js             localStorage auto-save helper
-  email-gate.js             Email prompt + cache + export click gate
-assets/
-  dblogo.png, VTU.png, wayanamac.jpg   Logos
+DBIT-PageCraft/
+│
+├── index.html                    # Assignment Front Page + Activity Book generator (root entry point)
+├── sw.js                         # Service Worker (must be at root for full scope)
+├── manifest.json                 # PWA Web App Manifest
+├── vercel.json                   # Vercel: clean URLs, rewrites, security headers
+├── robots.txt                    # Crawler rules
+├── sitemap.xml                   # SEO sitemap
+├── google*.html                  # Google Search Console verification
+├── LICENSE
+├── README.md
+│
+├── pages/                        # Secondary HTML pages (routed via vercel.json rewrites)
+│   ├── project-report.html       # 4-page Project Report generator  -> /project-report
+│   ├── admin.html                # Secured analytics dashboard       -> /admin
+│   └── 404.html                  # Custom 404 / offline fallback
+│
+├── css/
+│   ├── styles.css                # Front-page UI + A4 templates (assignment + activity book)
+│   └── project-report-styles.css # Report UI + 4-page A4 templates
+│
+├── js/
+│   ├── config.js                 # [GITIGNORED] Supabase credentials - copy from config.example.js
+│   ├── config.example.js         # Credentials template (commit this, not config.js)
+│   ├── script.js                 # Front-page logic (binding, capture, exports, templates, cache)
+│   ├── project-report-script.js  # Report logic (students, pages, exports, cache)
+│   ├── word-export.js            # Shared .doc/.docx builder (MHTML + html-docx-js, A4)
+│   ├── form-cache.js             # localStorage auto-save helper
+│   ├── email-gate.js             # Email prompt + cache + export click gate
+│   └── pwa.js                    # Service Worker registration + install prompt + update toast
+│
+├── assets/
+│   ├── dblogo.png                # DBIT logo
+│   ├── VTU.png                   # VTU logo
+│   ├── wayanamac.jpg             # Wayanamac Trust logo
+│   ├── icon-192.png              # PWA icon 192x192
+│   ├── icon-512.png              # PWA icon 512x512
+│   └── icon-maskable.png         # PWA maskable icon (Android)
+│
+└── docs/
+    ├── schema.sql                # Supabase table + RLS policies (run in SQL Editor)
+    ├── humans.txt                # Credits
+    ├── CONTRIBUTING.md
+    ├── CODE_OF_CONDUCT.md
+    └── SECURITY.md
 ```
 
 ## Templates & Export Formats
@@ -118,27 +148,37 @@ Pre-fill and optionally auto-download via the query string.
    git clone https://github.com/DBIT-Banglore/DBIT-PageCraft.git
    cd DBIT-PageCraft
    ```
-2. Start a local server (needed so logos load over HTTP for canvas/Word export):
+2. Set up your Supabase credentials:
+   ```bash
+   cp js/config.example.js js/config.js
+   # Edit js/config.js and fill in your SUPABASE_URL and SUPABASE_ANON_KEY
+   ```
+3. Start a local server (needed so logos and the Service Worker load correctly):
    ```bash
    npx serve
    ```
-3. Open the provided localhost URL in your browser.
+4. Open the provided localhost URL in your browser.
+
+> **Note:** `js/config.js` is git-ignored. Never commit real credentials.
 
 ## Supabase Setup
 
 The app uses Supabase for analytics logging and a secured admin dashboard.
 
 1. Create a free project at [supabase.com](https://supabase.com).
-2. Run `schema.sql` in your project's **SQL Editor** to create the `generations` table (now including an `email` column) with RLS policies.
+2. Run `docs/schema.sql` in your project's **SQL Editor** to create the `generations` table with RLS policies.
    - Already have the table from an older version? Just run:
      ```sql
      alter table generations add column if not exists email text;
      ```
 3. In **Authentication > Users**, create an admin user (email + password).
-4. Update `SUPABASE_URL` and `SUPABASE_ANON_KEY` in:
-   - `js/script.js`
-   - `js/project-report-script.js`
-   - `admin.html`
+4. Copy `js/config.example.js` to `js/config.js` and fill in:
+   ```js
+   window.AppConfig = {
+     SUPABASE_URL:      'https://YOUR_PROJECT_REF.supabase.co',
+     SUPABASE_ANON_KEY: 'YOUR_SUPABASE_ANON_KEY'
+   };
+   ```
 
 ### How it works
 
@@ -148,6 +188,20 @@ The app uses Supabase for analytics logging and a secured admin dashboard.
 | Reading analytics (select) | Authenticated user | Email/password sign-in required |
 
 The admin panel at `/admin` uses Supabase Auth - no hardcoded passwords. The logger inserts the email with each record and **safely retries without it** if the `email` column is missing, so analytics never break.
+
+## PWA (Progressive Web App)
+
+DBIT PageCraft is fully installable:
+
+- **Android/Chrome** - tap the install banner or the install icon in the address bar
+- **iOS/Safari** - Share > Add to Home Screen
+- **Desktop Chrome/Edge** - install icon in the address bar
+
+After installation all static assets (HTML, CSS, JS, logos, CDN libraries) are cached by the Service Worker. The app functions fully offline - you can generate and export documents without an internet connection. Analytics logging silently skips when offline and Supabase calls are never cached.
+
+### Updating the Service Worker cache
+
+When you make changes to the app, bump the `CACHE_NAME` version in `sw.js` (e.g. `dbit-pagecraft-v2` -> `dbit-pagecraft-v3`). The next time a user visits, the old cache is cleared and the new shell is cached.
 
 ## Admin Dashboard
 
@@ -159,7 +213,10 @@ At `/admin` (sign in with the Supabase user you created):
 
 ## Deployment
 
-Configured for zero-config deployment on **Vercel**. The included `vercel.json` enables clean URLs.
+Configured for zero-config deployment on **Vercel**. `vercel.json` handles:
+- Clean URLs (no `.html` extension in the address bar)
+- Rewrites: `/project-report` -> `pages/project-report.html`, `/admin` -> `pages/admin.html`
+- Security headers on all routes
 
 ## Team
 

@@ -1,8 +1,8 @@
 // ── Project Report Generator Script ─────────────────────────────────────────
 
-// ── Analytics ──
-const SUPABASE_URL = 'https://jkhxpdsyouecsjresikt.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0';
+// ── Analytics - credentials loaded from js/config.js (gitignored) ──
+const SUPABASE_URL      = (window.AppConfig && window.AppConfig.SUPABASE_URL)      || '';
+const SUPABASE_ANON_KEY = (window.AppConfig && window.AppConfig.SUPABASE_ANON_KEY) || '';
 
 async function logGeneration(type) {
   const url = `${SUPABASE_URL}/rest/v1/generations`;

@@ -14,3 +14,9 @@ Thumbs.db
 
 # Dependencies (if ever added)
 node_modules/
+
+# Environment variables (contain Supabase credentials - NEVER commit)
+.env
+
+# Build artifacts
+# js/config.js is intentionally committed (stub only - no credentials)

@@ -1,9 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - DBIT PageCraft</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1e3a5f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="PageCraft Admin">
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/icon-512.png">
+  <link rel="apple-touch-icon" href="/assets/icon-512.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -251,11 +261,19 @@
     </div>
   </div>
 </div>
-
+  <script>
+    /* Auto-injected by scripts/build.js from environment variables.
+       Do NOT add real credentials here - use .env (local) or
+       Vercel Environment Variables (production) instead. */
+    window.AppConfig = {
+      SUPABASE_URL:      'https://jkhxpdsyouecsjresikt.supabase.co',
+      SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0'
+    };
+  </script>
 <script>
-  // ── Supabase Config ──
-  const SUPABASE_URL = 'https://jkhxpdsyouecsjresikt.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraHhwZHN5b3VlY3NqcmVzaWt0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjU3MzAsImV4cCI6MjA5NjE0MTczMH0.ulmw1uPs9z3fUNll88h06g_8VetZgwVjZYJq1cOCBQ0';
+    // -- Supabase Config (injected by scripts/build.js from environment variables) --
+  const SUPABASE_URL      = (window.AppConfig && window.AppConfig.SUPABASE_URL)      || '';
+  const SUPABASE_ANON_KEY = (window.AppConfig && window.AppConfig.SUPABASE_ANON_KEY) || '';
 
   let accessToken = null;
   let allRows = [];

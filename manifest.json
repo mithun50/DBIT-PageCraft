@@ -1,0 +1,51 @@
+{
+  "name": "DBIT PageCraft",
+  "short_name": "PageCraft",
+  "description": "Generate perfectly formatted academic documents for DBIT, VTU - assignment front pages, project reports and activity book covers.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f172a",
+  "theme_color": "#1e3a5f",
+  "lang": "en",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Assignment Front Page",
+      "short_name": "Assignment",
+      "description": "Generate an assignment front page",
+      "url": "/",
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Project Report",
+      "short_name": "Report",
+      "description": "Generate a project report",
+      "url": "/project-report",
+      "icons": [{ "src": "/assets/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
